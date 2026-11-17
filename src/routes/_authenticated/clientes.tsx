@@ -1,0 +1,3 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { ClientsPage } from '@/components/governanca/clients';
+export const Route=createFileRoute('/_authenticated/clientes')({head:()=>({meta:[{title:'Meus clientes | Kit Governança Interna'},{name:'description',content:'Gerencie sua carteira de clientes e os dados de governança de cada empresa.'},{property:'og:title',content:'Meus clientes | Kit Governança Interna'},{property:'og:description',content:'Sua carteira de clientes e kits de governança interna.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:ClientsPage});

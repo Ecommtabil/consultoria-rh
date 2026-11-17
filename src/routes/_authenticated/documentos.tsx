@@ -1,0 +1,3 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { Shell, PageHeading } from '@/components/governanca/shell';
+export const Route=createFileRoute('/_authenticated/documentos')({head:()=>({meta:[{title:"Documentos | Kit Governança Interna"},{name:'description',content:"Documentos do cliente selecionado."},{property:'og:title',content:"Documentos | Kit Governança Interna"},{property:'og:description',content:"Documentos do cliente selecionado."},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:()=> <Shell><div className="page-content"><PageHeading eyebrow="KIT DO CLIENTE" title="Documentos"/></div></Shell>});

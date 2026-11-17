@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Application rules
+- Use generated Cloud clients and owner-scoped RLS for all client data; browser calls never use privileged keys.
+- Keep spreadsheet normalization in a browser-safe library with concrete tests; transactional database RPCs replace only supplied sheets and clone client dependencies atomically.
+- Share session, selected client and navigation through a root provider; protected named routes use the Cloud client-only authenticated layout.
+- Keep document, schedule and salary screens title-only until their next briefs; installed export libraries are not yet used.

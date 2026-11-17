@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794953115540,
+      "tag": "0000_governanca_clientes",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794953200733,
+      "tag": "0001_client_atomic_actions",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794953488372,
+      "tag": "0002_import_turnos_preserve_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794953526658,
+      "tag": "0003_protect_initialization",
+      "breakpoints": true
+    }
+  ]
+}

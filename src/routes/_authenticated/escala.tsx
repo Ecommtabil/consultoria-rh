@@ -1,0 +1,3 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { Shell, PageHeading } from '@/components/governanca/shell';
+export const Route=createFileRoute('/_authenticated/escala')({head:()=>({meta:[{title:"Escala de trabalho | Kit Governança Interna"},{name:'description',content:"Escala de trabalho do cliente selecionado."},{property:'og:title',content:"Escala de trabalho | Kit Governança Interna"},{property:'og:description',content:"Escala de trabalho do cliente selecionado."},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:()=> <Shell><div className="page-content"><PageHeading eyebrow="KIT DO CLIENTE" title="Escala de trabalho"/></div></Shell>});

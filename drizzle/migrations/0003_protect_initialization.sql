@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.initialize_cliente() FROM PUBLIC,anon,authenticated; CREATE INDEX postos_turno_cliente ON public.postos(turno_id,cliente_id);
