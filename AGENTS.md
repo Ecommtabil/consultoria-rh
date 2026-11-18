@@ -34,3 +34,5 @@ use the editor.
 - Keep spreadsheet normalization in a browser-safe library with concrete tests; transactional database RPCs replace only supplied sheets and clone client dependencies atomically.
 - Share session, selected client and navigation through a root provider; protected named routes use the Cloud client-only authenticated layout.
 - Keep document and salary screens title-only until their briefs; schedule math stays in pure functions under src/lib/escala covered by Vitest, and PDFs share the src/lib/pdf.ts header/footer.
+
+- Data access requires an office/admin row in public.user_roles (is_office_member()); signup alone grants nothing, preventing strangers from reading client data.

@@ -431,20 +431,46 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       duplicate_cliente: { Args: { p_cliente: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       import_cliente: {
         Args: { p_bundle: Json; p_cliente: string; p_modo?: string }
         Returns: undefined
       }
+      is_office_member: { Args: never; Returns: boolean }
       unaccent_name: { Args: { v: string }; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "office"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -571,6 +597,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "office"],
+    },
   },
 } as const
