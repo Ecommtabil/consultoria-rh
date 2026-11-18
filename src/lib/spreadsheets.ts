@@ -12,12 +12,13 @@ export function downloadTemplate() {
   XLSX.utils.book_append_sheet(book,XLSX.utils.aoa_to_sheet([
     ['Como preencher'],['Preencha as abas necessárias. Remova as abas que não deseja substituir.'],
     ['Empresa: use os campos da primeira coluna. Datas: DD/MM/AAAA; horas: HH:MM.'],
+    ['Colaboradores: Setor agrupa a escala. Sexo F ou M. Jornada 6x1 ou 5x2. Horas semanais: 40, 42 ou 44.'],
+    ['Entrada e Saída: horário dos dias úteis (HH:MM ou hora do Excel).'],
+    ['Sábado/Domingo: em branco = mesmo horário; preenchido = horário próprio; “FOLGA” na entrada = folga fixa.'],
+    ['Antes de gravar a equipe, o sistema mostra uma prévia: substituir ou adicionar à equipe atual.'],
     ['Salários: aceita números ou R$ 3.500,00. Notas do consultor: Sim ou Não.'],
-    ['Postos: Turno deve corresponder ao nome ou à sigla de um turno.'],
-    ['Escala: 5x2, 6x1, 12x36 ou 4x2. Operação: todos, segsab ou segsex.'],
     ['Cargos: Trilha Técnica ou Gestão. Nível e tempo mínimo: números inteiros.'],
-    ['Uma aba presente, mesmo sem linhas, substitui e limpa seus dados. CSV importa uma tabela.'],
-  ]),'Como preencher');
+]),'Como preencher');
   XLSX.writeFile(book,'Modelo_Kit_Governanca.xlsx');
 }
 export async function readSpreadsheet(file: File) {

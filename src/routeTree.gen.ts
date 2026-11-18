@@ -19,6 +19,13 @@ import { Route as AuthenticatedDocumentosRouteImport } from './routes/_authentic
 import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticated/empresa'
 import { Route as AuthenticatedEscalaRouteImport } from './routes/_authenticated/escala'
 import { Route as AuthenticatedImportarRouteImport } from './routes/_authenticated/importar'
+import { Route as AuthenticatedEscalaIndexRouteImport } from './routes/_authenticated/escala.index'
+import { Route as AuthenticatedEscalaAlmocosRouteImport } from './routes/_authenticated/escala.almocos'
+import { Route as AuthenticatedEscalaComparativoRouteImport } from './routes/_authenticated/escala.comparativo'
+import { Route as AuthenticatedEscalaEquipeRouteImport } from './routes/_authenticated/escala.equipe'
+import { Route as AuthenticatedEscalaFuncionamentoRouteImport } from './routes/_authenticated/escala.funcionamento'
+import { Route as AuthenticatedEscalaMensalRouteImport } from './routes/_authenticated/escala.mensal'
+import { Route as AuthenticatedEscalaQuadroRouteImport } from './routes/_authenticated/escala.quadro'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -69,6 +76,48 @@ const AuthenticatedImportarRoute = AuthenticatedImportarRouteImport.update({
   path: '/importar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEscalaIndexRoute =
+  AuthenticatedEscalaIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaAlmocosRoute =
+  AuthenticatedEscalaAlmocosRouteImport.update({
+    id: '/almocos',
+    path: '/almocos',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaComparativoRoute =
+  AuthenticatedEscalaComparativoRouteImport.update({
+    id: '/comparativo',
+    path: '/comparativo',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaEquipeRoute =
+  AuthenticatedEscalaEquipeRouteImport.update({
+    id: '/equipe',
+    path: '/equipe',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaFuncionamentoRoute =
+  AuthenticatedEscalaFuncionamentoRouteImport.update({
+    id: '/funcionamento',
+    path: '/funcionamento',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaMensalRoute =
+  AuthenticatedEscalaMensalRouteImport.update({
+    id: '/mensal',
+    path: '/mensal',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
+const AuthenticatedEscalaQuadroRoute =
+  AuthenticatedEscalaQuadroRouteImport.update({
+    id: '/quadro',
+    path: '/quadro',
+    getParentRoute: () => AuthenticatedEscalaRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -78,8 +127,15 @@ export interface FileRoutesByFullPath {
   '/clientes': typeof AuthenticatedClientesRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
-  '/escala': typeof AuthenticatedEscalaRoute
+  '/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/importar': typeof AuthenticatedImportarRoute
+  '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
+  '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
+  '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
+  '/escala/funcionamento': typeof AuthenticatedEscalaFuncionamentoRoute
+  '/escala/mensal': typeof AuthenticatedEscalaMensalRoute
+  '/escala/quadro': typeof AuthenticatedEscalaQuadroRoute
+  '/escala/': typeof AuthenticatedEscalaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,8 +145,14 @@ export interface FileRoutesByTo {
   '/clientes': typeof AuthenticatedClientesRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
-  '/escala': typeof AuthenticatedEscalaRoute
   '/importar': typeof AuthenticatedImportarRoute
+  '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
+  '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
+  '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
+  '/escala/funcionamento': typeof AuthenticatedEscalaFuncionamentoRoute
+  '/escala/mensal': typeof AuthenticatedEscalaMensalRoute
+  '/escala/quadro': typeof AuthenticatedEscalaQuadroRoute
+  '/escala': typeof AuthenticatedEscalaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,8 +164,15 @@ export interface FileRoutesById {
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/documentos': typeof AuthenticatedDocumentosRoute
   '/_authenticated/empresa': typeof AuthenticatedEmpresaRoute
-  '/_authenticated/escala': typeof AuthenticatedEscalaRoute
+  '/_authenticated/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/_authenticated/importar': typeof AuthenticatedImportarRoute
+  '/_authenticated/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
+  '/_authenticated/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
+  '/_authenticated/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
+  '/_authenticated/escala/funcionamento': typeof AuthenticatedEscalaFuncionamentoRoute
+  '/_authenticated/escala/mensal': typeof AuthenticatedEscalaMensalRoute
+  '/_authenticated/escala/quadro': typeof AuthenticatedEscalaQuadroRoute
+  '/_authenticated/escala/': typeof AuthenticatedEscalaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +186,13 @@ export interface FileRouteTypes {
     | '/empresa'
     | '/escala'
     | '/importar'
+    | '/escala/almocos'
+    | '/escala/comparativo'
+    | '/escala/equipe'
+    | '/escala/funcionamento'
+    | '/escala/mensal'
+    | '/escala/quadro'
+    | '/escala/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -126,8 +202,14 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/documentos'
     | '/empresa'
-    | '/escala'
     | '/importar'
+    | '/escala/almocos'
+    | '/escala/comparativo'
+    | '/escala/equipe'
+    | '/escala/funcionamento'
+    | '/escala/mensal'
+    | '/escala/quadro'
+    | '/escala'
   id:
     | '__root__'
     | '/'
@@ -140,6 +222,13 @@ export interface FileRouteTypes {
     | '/_authenticated/empresa'
     | '/_authenticated/escala'
     | '/_authenticated/importar'
+    | '/_authenticated/escala/almocos'
+    | '/_authenticated/escala/comparativo'
+    | '/_authenticated/escala/equipe'
+    | '/_authenticated/escala/funcionamento'
+    | '/_authenticated/escala/mensal'
+    | '/_authenticated/escala/quadro'
+    | '/_authenticated/escala/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -221,15 +310,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImportarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/escala/': {
+      id: '/_authenticated/escala/'
+      path: '/'
+      fullPath: '/escala/'
+      preLoaderRoute: typeof AuthenticatedEscalaIndexRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/almocos': {
+      id: '/_authenticated/escala/almocos'
+      path: '/almocos'
+      fullPath: '/escala/almocos'
+      preLoaderRoute: typeof AuthenticatedEscalaAlmocosRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/comparativo': {
+      id: '/_authenticated/escala/comparativo'
+      path: '/comparativo'
+      fullPath: '/escala/comparativo'
+      preLoaderRoute: typeof AuthenticatedEscalaComparativoRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/equipe': {
+      id: '/_authenticated/escala/equipe'
+      path: '/equipe'
+      fullPath: '/escala/equipe'
+      preLoaderRoute: typeof AuthenticatedEscalaEquipeRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/funcionamento': {
+      id: '/_authenticated/escala/funcionamento'
+      path: '/funcionamento'
+      fullPath: '/escala/funcionamento'
+      preLoaderRoute: typeof AuthenticatedEscalaFuncionamentoRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/mensal': {
+      id: '/_authenticated/escala/mensal'
+      path: '/mensal'
+      fullPath: '/escala/mensal'
+      preLoaderRoute: typeof AuthenticatedEscalaMensalRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
+    '/_authenticated/escala/quadro': {
+      id: '/_authenticated/escala/quadro'
+      path: '/quadro'
+      fullPath: '/escala/quadro'
+      preLoaderRoute: typeof AuthenticatedEscalaQuadroRouteImport
+      parentRoute: typeof AuthenticatedEscalaRoute
+    }
   }
 }
+
+interface AuthenticatedEscalaRouteChildren {
+  AuthenticatedEscalaAlmocosRoute: typeof AuthenticatedEscalaAlmocosRoute
+  AuthenticatedEscalaComparativoRoute: typeof AuthenticatedEscalaComparativoRoute
+  AuthenticatedEscalaEquipeRoute: typeof AuthenticatedEscalaEquipeRoute
+  AuthenticatedEscalaFuncionamentoRoute: typeof AuthenticatedEscalaFuncionamentoRoute
+  AuthenticatedEscalaMensalRoute: typeof AuthenticatedEscalaMensalRoute
+  AuthenticatedEscalaQuadroRoute: typeof AuthenticatedEscalaQuadroRoute
+  AuthenticatedEscalaIndexRoute: typeof AuthenticatedEscalaIndexRoute
+}
+
+const AuthenticatedEscalaRouteChildren: AuthenticatedEscalaRouteChildren = {
+  AuthenticatedEscalaAlmocosRoute: AuthenticatedEscalaAlmocosRoute,
+  AuthenticatedEscalaComparativoRoute: AuthenticatedEscalaComparativoRoute,
+  AuthenticatedEscalaEquipeRoute: AuthenticatedEscalaEquipeRoute,
+  AuthenticatedEscalaFuncionamentoRoute: AuthenticatedEscalaFuncionamentoRoute,
+  AuthenticatedEscalaMensalRoute: AuthenticatedEscalaMensalRoute,
+  AuthenticatedEscalaQuadroRoute: AuthenticatedEscalaQuadroRoute,
+  AuthenticatedEscalaIndexRoute: AuthenticatedEscalaIndexRoute,
+}
+
+const AuthenticatedEscalaRouteWithChildren =
+  AuthenticatedEscalaRoute._addFileChildren(AuthenticatedEscalaRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCargosRoute: typeof AuthenticatedCargosRoute
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedDocumentosRoute: typeof AuthenticatedDocumentosRoute
   AuthenticatedEmpresaRoute: typeof AuthenticatedEmpresaRoute
-  AuthenticatedEscalaRoute: typeof AuthenticatedEscalaRoute
+  AuthenticatedEscalaRoute: typeof AuthenticatedEscalaRouteWithChildren
   AuthenticatedImportarRoute: typeof AuthenticatedImportarRoute
 }
 
@@ -238,7 +399,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedDocumentosRoute: AuthenticatedDocumentosRoute,
   AuthenticatedEmpresaRoute: AuthenticatedEmpresaRoute,
-  AuthenticatedEscalaRoute: AuthenticatedEscalaRoute,
+  AuthenticatedEscalaRoute: AuthenticatedEscalaRouteWithChildren,
   AuthenticatedImportarRoute: AuthenticatedImportarRoute,
 }
 

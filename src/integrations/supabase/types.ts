@@ -67,6 +67,7 @@ export type Database = {
           criado_em: string | null
           dia_fim: string | null
           dia_inicio: string | null
+          escala_config: Json
           hora_entrada: string | null
           hora_saida: string | null
           id: string
@@ -90,6 +91,7 @@ export type Database = {
           criado_em?: string | null
           dia_fim?: string | null
           dia_inicio?: string | null
+          escala_config?: Json
           hora_entrada?: string | null
           hora_saida?: string | null
           id?: string
@@ -113,6 +115,7 @@ export type Database = {
           criado_em?: string | null
           dia_fim?: string | null
           dia_inicio?: string | null
+          escala_config?: Json
           hora_entrada?: string | null
           hora_saida?: string | null
           id?: string
@@ -136,27 +139,72 @@ export type Database = {
           cargo: string | null
           cliente_id: string
           departamento: string | null
+          dom_entrada: string | null
+          dom_modo: string
+          dom_saida: string | null
+          entrada: string | null
+          horas_semanais: number | null
           id: string
+          jornada_atual: string | null
+          matricula: string | null
           nome: string | null
+          nova_jornada: string
           posto: string | null
+          sab_entrada: string | null
+          sab_modo: string
+          sab_saida: string | null
+          saida: string | null
+          salario: number | null
+          setor: string | null
+          sexo: string | null
         }
         Insert: {
           admissao?: string | null
           cargo?: string | null
           cliente_id: string
           departamento?: string | null
+          dom_entrada?: string | null
+          dom_modo?: string
+          dom_saida?: string | null
+          entrada?: string | null
+          horas_semanais?: number | null
           id?: string
+          jornada_atual?: string | null
+          matricula?: string | null
           nome?: string | null
+          nova_jornada?: string
           posto?: string | null
+          sab_entrada?: string | null
+          sab_modo?: string
+          sab_saida?: string | null
+          saida?: string | null
+          salario?: number | null
+          setor?: string | null
+          sexo?: string | null
         }
         Update: {
           admissao?: string | null
           cargo?: string | null
           cliente_id?: string
           departamento?: string | null
+          dom_entrada?: string | null
+          dom_modo?: string
+          dom_saida?: string | null
+          entrada?: string | null
+          horas_semanais?: number | null
           id?: string
+          jornada_atual?: string | null
+          matricula?: string | null
           nome?: string | null
+          nova_jornada?: string
           posto?: string | null
+          sab_entrada?: string | null
+          sab_modo?: string
+          sab_saida?: string | null
+          saida?: string | null
+          salario?: number | null
+          setor?: string | null
+          sexo?: string | null
         }
         Relationships: [
           {
@@ -190,6 +238,77 @@ export type Database = {
             columns: ["cliente_id"]
             isOneToOne: true
             referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      escalas: {
+        Row: {
+          atualizado_em: string
+          cliente_id: string
+          criado_em: string
+          dados: Json
+          id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          cliente_id: string
+          criado_em?: string
+          dados?: Json
+          id: string
+        }
+        Update: {
+          atualizado_em?: string
+          cliente_id?: string
+          criado_em?: string
+          dados?: Json
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escalas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ferias: {
+        Row: {
+          cliente_id: string
+          colaborador_id: string
+          fim: string
+          id: string
+          inicio: string
+        }
+        Insert: {
+          cliente_id: string
+          colaborador_id: string
+          fim: string
+          id?: string
+          inicio: string
+        }
+        Update: {
+          cliente_id?: string
+          colaborador_id?: string
+          fim?: string
+          id?: string
+          inicio?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
             referencedColumns: ["id"]
           },
         ]
@@ -319,7 +438,7 @@ export type Database = {
     Functions: {
       duplicate_cliente: { Args: { p_cliente: string }; Returns: string }
       import_cliente: {
-        Args: { p_bundle: Json; p_cliente: string }
+        Args: { p_bundle: Json; p_cliente: string; p_modo?: string }
         Returns: undefined
       }
       unaccent_name: { Args: { v: string }; Returns: string }
