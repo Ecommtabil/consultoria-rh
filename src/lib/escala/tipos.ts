@@ -2,10 +2,10 @@ export type Regime = '6x1' | '5x2';
 export type Cenario = 'atual' | 'nova';
 export type Horario = { ini: number; fim: number } | null;
 export type SetorConfig = {
-  dias?: number[]; abre?: string; fecha?: string;
-  sabAbre?: string; sabFecha?: string; domAbre?: string; domFecha?: string;
-  semContratar?: boolean; completarCarga?: boolean; rodizioSab?: 0 | 2 | 3 | 4;
-  nova?: string; postos?: number | null;
+  dias?: number[] | undefined; abre?: string | undefined; fecha?: string | undefined;
+  sabAbre?: string | undefined; sabFecha?: string | undefined; domAbre?: string | undefined; domFecha?: string | undefined;
+  semContratar?: boolean | undefined; completarCarga?: boolean | undefined; rodizioSab?: 0 | 2 | 3 | 4 | undefined;
+  nova?: string | undefined; postos?: number | null | undefined;
 };
 export type EscalaConfig = {
   empresa: { abre: string; fecha: string; dias: number[] };
@@ -13,7 +13,7 @@ export type EscalaConfig = {
   setores: Record<string, SetorConfig>;
 };
 export type Colab = {
-  id: string; nome: string; setor: string | null; sexo: string | null; cargo?: string | null; matricula?: string | null;
+  id: string; nome: string | null; setor: string | null; sexo: string | null; cargo?: string | null; matricula?: string | null;
   jornada_atual: string | null; horas_semanais: number | null; entrada: string | null; saida: string | null;
   sab_modo: string; sab_entrada: string | null; sab_saida: string | null;
   dom_modo: string; dom_entrada: string | null; dom_saida: string | null;
@@ -21,7 +21,7 @@ export type Colab = {
 };
 export type FeriasReg = { colaborador_id: string; inicio: string; fim: string };
 export type Celula = { c: string; e?: 1; w?: string; alm?: string | null };
-export type PessoaEsc = { id: string; nome: string; setor: string; sexo: string | null; regime: Regime; horas: number; grupo: number; contratacao?: boolean };
+export type PessoaEsc = { id: string; nome: string; setor: string; sexo: string | null; regime: Regime; horas: number; grupo: number; contratacao?: boolean | undefined };
 export type SetorEsc = { postos: number; horarios: ([number, number] | null)[]; completar: boolean };
 export type EscalaDados = {
   versao: 2; mes: string; cenario: Cenario; geradaEm: string; dias: string[];

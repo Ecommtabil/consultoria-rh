@@ -28,7 +28,7 @@ export function EscalaProvider({ client, children }: { client: Cliente; children
   const patchSetor = (s: string, p: Partial<SetorConfig>) => patchCfg(c => ({ ...c, setores: { ...c.setores, [s]: { ...(c.setores[s] ?? {}), ...p } } }));
   const colabsQ = useQuery(colabsOptions(client.id)); const feriasQ = useQuery(feriasOptions(client.id)); const cargosQ = useQuery(cargosOptions(client.id));
   const colabs = colabsQ.data ?? []; const cargos = cargosQ.data ?? [];
-  const matriz = (c: Colaborador) => { const n = (c.cargo ?? '').trim().toLowerCase(); return n ? cargos.find(k => k.cargo.trim().toLowerCase() === n)?.salario_base ?? null : null; };
+  const matriz = (c: Colaborador) => { const n = (c.cargo ?? '').trim().toLowerCase(); return n ? cargos.find(k => (k.cargo ?? '').trim().toLowerCase() === n)?.salario_base ?? null : null; };
   const salarioDe = (c: Colaborador) => c.salario ?? matriz(c); const daMatriz = (c: Colaborador) => c.salario == null && matriz(c) != null;
   const setores = useMemo(() => [...new Set(colabs.map(setorDe))].sort((a, b) => a.localeCompare(b)), [colabs]);
   const dims = useMemo(() => Object.fromEntries(setores.map(s => [s, dimensionarSetor(cfg, s, colabs.filter(c => setorDe(c) === s), c => salarioDe(c as Colaborador))])), [cfg, colabs, cargos, setores]);

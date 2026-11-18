@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { FuncionamentoPage } from '@/components/escala/funcionamento';
-export const Route = createFileRoute('/_authenticated/escala/funcionamento')({ component: FuncionamentoPage });
+export const Route = createFileRoute('/_authenticated/escala/funcionamento')({ head: () => ({ meta: [{ title: 'Funcionamento e jornada | Kit Governança Interna' }, { name: 'description', content: 'Funcionamento e jornada do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Funcionamento e jornada | Kit Governança Interna' }, { property: 'og:description', content: 'Funcionamento e jornada do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: FuncionamentoPage });

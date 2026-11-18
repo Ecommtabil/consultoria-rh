@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { QuadroPage } from '@/components/escala/quadro';
-export const Route = createFileRoute('/_authenticated/escala/quadro')({ component: QuadroPage });
+export const Route = createFileRoute('/_authenticated/escala/quadro')({ head: () => ({ meta: [{ title: 'Quadro semanal | Kit Governança Interna' }, { name: 'description', content: 'Quadro semanal do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Quadro semanal | Kit Governança Interna' }, { property: 'og:description', content: 'Quadro semanal do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: QuadroPage });

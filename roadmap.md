@@ -1,9 +1,11 @@
 # Kit Governança Interna
-- [x] Acesso por e-mail e senha, recuperação e isolamento dos clientes.
-- [x] Meus clientes: busca, cadastro, duplicação e exclusão.
-- [x] Empresa e equipe com salvamento automático e edição de colaboradores.
-- [x] Importação Excel/CSV, modelo e resumo das abas importadas.
-- [x] Páginas vazias de Documentos, Escala e Cargos; identidade e modo escuro.
-- [x] Testar fluxos reais, regras de importação e salvar alterações.
-
-Verificação: cadastro, busca, persistência, importação de cinco abas, duplicação completa, exclusão, modelo e saída testados com consultor temporário; nove testes automatizados passaram. Entrega de e-mails de confirmação/recuperação não exercitada.
+- [x] Acesso, clientes, empresa e equipe, importação, identidade e modo escuro.
+- [x] Prompt 1 — renovação visual.
+- [x] Prompt 2 — dados compartilhados, setor, CNPJ alfanumérico, férias/escalas, nova importação com prévia.
+- [x] Prompt 3 — módulo Escalas: funcionamento, equipe, férias.
+- [x] Prompt 4 — comparativo e pontos falhos.
+- [x] Prompt 5 — escala mensal.
+- [x] Prompt 6 — almoços e folgas.
+- [x] Prompt 7 — quadro semanal e PDF.
+- [x] Prompt 8 — relatório de dimensionamento, testes e exclusão em duas etapas.
+- [ ] Documentos e Cargos e salários — aguardam briefing próprio (estilos de Prompt 1 para essas telas dependem disso).

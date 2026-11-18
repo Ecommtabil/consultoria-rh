@@ -13,7 +13,7 @@ export function FuncionamentoPage() {
   const setN = (p: Partial<typeof cfg.nova>) => patchCfg(c => ({ ...c, nova: { ...c.nova, ...p } }));
   const gantt = setores.map(s => { const sc = setorCfg(cfg, s); const b = horarioBase(sc); const row: Record<string, unknown> = { setor: s, aberto: b ? [b.ini, b.fim] : null };
     const d0 = [0, 1, 2, 3, 4, 5, 6].find(d => dims[s]?.turnos[0]?.[d]) ?? 0; dims[s]?.turnos.forEach((t, i) => { const w = t[d0]; if (w) row[`t${i}`] = [w.ini, w.fim]; }); return row; });
-  const maxT = Math.max(1, ...setores.map(s => dims[s]?.turnos.length ?? 0)); const maxFim = Math.max(1440, ...gantt.map(g => (g.aberto as number[] | null)?.[1] ?? 0));
+  const maxT = Math.max(1, ...setores.map(s => dims[s]?.turnos.length ?? 0)); const maxFim = Math.max(1440, ...gantt.map(g => (g['aberto'] as number[] | null)?.[1] ?? 0));
   return <div className="ez-stack">
     <div className="ez-grid2">
       <Card title="Funcionamento da empresa" desc="Horário de abertura e dias de operação. O fechamento pode passar da meia-noite.">

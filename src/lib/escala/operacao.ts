@@ -1,6 +1,6 @@
 import type { EscalaConfig, Horario, SetorConfig } from './tipos';
 import { janela } from './tempo';
-export type SetorResolvido = Required<Pick<SetorConfig, 'dias' | 'abre' | 'fecha'>> & SetorConfig;
+export type SetorResolvido = SetorConfig & { dias: number[]; abre: string; fecha: string };
 export function setorCfg(cfg: EscalaConfig, setor: string): SetorResolvido {
   const s = cfg.setores[setor] ?? {};
   return { ...s, dias: s.dias ?? cfg.empresa.dias, abre: s.abre || cfg.empresa.abre, fecha: s.fecha || cfg.empresa.fecha };

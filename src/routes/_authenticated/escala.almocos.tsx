@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AlmocosPage } from '@/components/escala/almocos';
-export const Route = createFileRoute('/_authenticated/escala/almocos')({ component: AlmocosPage });
+export const Route = createFileRoute('/_authenticated/escala/almocos')({ head: () => ({ meta: [{ title: 'Almoços e folgas | Kit Governança Interna' }, { name: 'description', content: 'Almoços e folgas do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Almoços e folgas | Kit Governança Interna' }, { property: 'og:description', content: 'Almoços e folgas do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: AlmocosPage });

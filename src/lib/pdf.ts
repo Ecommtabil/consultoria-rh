@@ -9,13 +9,15 @@ export const TEXTO: [number, number, number] = [15, 23, 42];
 export const CINZA: [number, number, number] = [100, 116, 139];
 export type Pdf = { doc: jsPDF; y: number };
 /** Cabeçalho padrão: faixa azul com título, empresa e CNPJ. */
-export function novoPdf(titulo: string, empresa: { nome: string; cnpj?: string | null }, linhas: string[] = []): Pdf {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' }); doc.setFont('helvetica', 'normal');
+export function faixa(doc: jsPDF, titulo: string, empresa: { nome: string; cnpj?: string | null }, linhas: string[] = []) {
   const h = 22 + linhas.length * 4.2; doc.setFillColor(...AZUL); doc.rect(0, 0, 210, h, 'F');
   doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.text(titulo, 14, 10);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.text(`${empresa.nome}${empresa.cnpj ? ` — CNPJ ${empresa.cnpj}` : ''}`, 14, 16);
-  linhas.forEach((l, i) => doc.text(l, 14, 21 + i * 4.2));
-  doc.setTextColor(...TEXTO); return { doc, y: h + 8 };
+  linhas.forEach((l, i) => doc.text(l, 14, 21 + i * 4.2)); doc.setTextColor(...TEXTO); return h + 8;
+}
+/** Cabeçalho padrão: faixa azul com título, empresa e CNPJ. */
+export function novoPdf(titulo: string, empresa: { nome: string; cnpj?: string | null }, linhas: string[] = []): Pdf {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' }); doc.setFont('helvetica', 'normal'); return { doc, y: faixa(doc, titulo, empresa, linhas) };
 }
 export function quebra(p: Pdf, alt: number) { if (p.y + alt > 280) { p.doc.addPage(); p.y = 16; } }
 export function secao(p: Pdf, texto: string) { quebra(p, 14); p.doc.setFont('helvetica', 'bold'); p.doc.setFontSize(11.5); p.doc.setTextColor(...AZUL); p.doc.text(texto, 14, p.y); p.doc.setDrawColor(...AZUL2); p.doc.setLineWidth(0.4); p.doc.line(14, p.y + 1.6, 196, p.y + 1.6); p.y += 7; p.doc.setTextColor(...TEXTO); p.doc.setFont('helvetica', 'normal'); }

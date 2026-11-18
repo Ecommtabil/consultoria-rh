@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ComparativoPage } from '@/components/escala/comparativo';
-export const Route = createFileRoute('/_authenticated/escala/comparativo')({ component: ComparativoPage });
+export const Route = createFileRoute('/_authenticated/escala/comparativo')({ head: () => ({ meta: [{ title: 'Comparativo | Kit Governança Interna' }, { name: 'description', content: 'Comparativo do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Comparativo | Kit Governança Interna' }, { property: 'og:description', content: 'Comparativo do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: ComparativoPage });

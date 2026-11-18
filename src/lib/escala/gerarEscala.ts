@@ -63,9 +63,9 @@ export function gerarEscala(inp: EntradaEscala): EscalaDados {
           if (trabalhando - 1 >= (plano.needDia[d]![g] ?? 0)) dec[i] = 'F';
         }
         M.forEach((m, i) => {
-          const s = st[i]!; const r = dec[i];
+          const s = st[i]!; const r = dec[i] ?? null;
           if (r === null) { const j = m.janelas[d] as { ini: number; fim: number }; codSemana[i]![d] = `${j.ini}-${j.fim}`; s.consec++; if (d === 6) s.dom++; if (d === 5) s.sabSem = 0; }
-          else { codSemana[i]![d] = r; if (r !== 'X' || true) s.consec = r === 'X' || r === 'F' || r === 'FE' ? 0 : s.consec; if (r !== 'X' && s.quota > 0) s.quota--; if (r === 'F' && d === 5 && reservados.has(i)) reservados.delete(i); if (d === 6) s.dom = 0; if (d === 5) s.sabSem++; }
+          else { codSemana[i]![d] = r; s.consec = 0; if (r !== 'X' && s.quota > 0) s.quota--; if (r === 'F' && d === 5 && reservados.has(i)) reservados.delete(i); if (d === 6) s.dom = 0; if (d === 5) s.sabSem++; }
         });
       }
       M.forEach((m, i) => {

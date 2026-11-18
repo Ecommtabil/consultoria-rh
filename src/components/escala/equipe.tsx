@@ -66,8 +66,8 @@ function Ferias({ colabs, ferias }: { colabs: Colaborador[]; ferias: { id: strin
   const { client } = useEscala(); const qc = useQueryClient(); const [f, setF] = useState({ colaborador_id: '', inicio: '', fim: '' });
   const dias = f.inicio && f.fim ? Math.round((Date.parse(f.fim) - Date.parse(f.inicio)) / 864e5) + 1 : 0;
   const sobrepoe = !!f.colaborador_id && !!f.inicio && !!f.fim && ferias.some(x => x.colaborador_id === f.colaborador_id && x.inicio <= f.fim && f.inicio <= x.fim);
-  async function add() { if (!f.colaborador_id || !f.inicio || !f.fim) return toast.error('Escolha o funcionário, o início e o fim.'); if (f.fim < f.inicio) return toast.error('O fim deve ser depois do início.'); if (sobrepoe) return toast.error('Este período se sobrepõe a outras férias da mesma pessoa.');
-    const { error } = await supabase.from('ferias').insert({ ...f, cliente_id: client.id }); if (error) return toast.error(error.message); setF({ colaborador_id: f.colaborador_id, inicio: '', fim: '' }); await qc.invalidateQueries({ queryKey: ['ferias', client.id] }); toast.success('Férias registradas.'); }
+  async function add() { if (!f.colaborador_id || !f.inicio || !f.fim) return void toast.error('Escolha o funcionário, o início e o fim.'); if (f.fim < f.inicio) return void toast.error('O fim deve ser depois do início.'); if (sobrepoe) return void toast.error('Este período se sobrepõe a outras férias da mesma pessoa.');
+    const { error } = await supabase.from('ferias').insert({ ...f, cliente_id: client.id }); if (error) return void toast.error(error.message); setF({ colaborador_id: f.colaborador_id, inicio: '', fim: '' }); await qc.invalidateQueries({ queryKey: ['ferias', client.id] }); toast.success('Férias registradas.'); }
   async function remove(id: string) { const { error } = await supabase.from('ferias').delete().eq('id', id); if (error) toast.error(error.message); await qc.invalidateQueries({ queryKey: ['ferias', client.id] }); }
   const nome = (id: string) => colabs.find(c => c.id === id)?.nome ?? '—';
   return <Card title="Férias" desc="Usadas na escala mensal como FE.">

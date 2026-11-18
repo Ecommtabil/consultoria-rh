@@ -9,7 +9,7 @@ const stages=[
   {to:'/importar',label:'Importar dados',icon:Upload},
   {to:'/empresa',label:'Empresa e equipe',icon:Users},
   {to:'/documentos',label:'Documentos',icon:FileText},
-  {to:'/escala',label:'Escala de trabalho',icon:CalendarDays},
+  {to:'/escala',label:'Escalas e dimensionamento',icon:CalendarDays},
   {to:'/cargos',label:'Cargos e salários',icon:ChartNoAxesCombined},
 ] as const;
 export function Brand(){return <div className="brand"><span className="brand-symbol"><ShieldCheck size={20}/></span><div><strong>Kit Governança</strong><span>INTERNA</span></div></div>;}
@@ -37,7 +37,7 @@ export function Shell({children}:{children:ReactNode}){
       </div>
       <nav className="main-tabs" aria-label="Seções">
         <Link to="/clientes" className={`main-tab ${pathname==='/'||pathname==='/clientes'?'active':''}`}><Building2/>Meus clientes<span className="nav-count">{clients.length}</span></Link>
-        {stages.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`main-tab ${pathname===to?'active':''}`}><Icon/>{label}</Link>)}
+        {stages.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`main-tab ${pathname===to||pathname.startsWith(`${to}/`)?'active':''}`}><Icon/>{label}</Link>)}
       </nav>
     </header>
     <div className="workspace"><main>{children}</main><footer className="workspace-footer"><span>Kit Governança Interna</span><span>Organização que sustenta boas relações.</span><ShieldCheck size={16}/></footer></div>

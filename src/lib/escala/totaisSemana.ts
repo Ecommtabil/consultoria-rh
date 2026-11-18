@@ -11,7 +11,7 @@ export function totaisSemana(e: EscalaDados, w: number, almocos?: Record<string,
     let dias = 0, escaladas = 0, fechada = 0, domingo = 0, ferias = 0, horas = 0;
     for (const i of idx) {
       const c = e.grade[p.id]?.[i]?.c ?? 'X'; const dom = diaSemana(e.dias[i]!) === 6;
-      if (c === 'F') { escaladas++; if (dom) domingo++; } else if (c === 'X') { fechada++; if (dom) domingo++; } else if (c === 'FE') ferias++;
+      if (c === 'F') { escaladas++; if (dom) domingo++; } else if (c === 'X') fechada++; else if (c === 'FE') ferias++;
       else { const j = e.codigos[c]; if (!j) continue; dias++; const a = almocos?.[p.id]?.[i]; horas += a ? j[1] - j[0] - (a.fim - a.ini) : trabalhoJanela(j[1] - j[0]); }
     }
     const carga = p.horas * 60; const saldo = ferias ? null : horas - carga; const minimo = 7 - diasTrabalho(p.regime); const folgas = escaladas + fechada;

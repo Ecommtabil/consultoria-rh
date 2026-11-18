@@ -16,5 +16,5 @@ export function ChartTip({ active, payload, label, fmt }: { active?: boolean; pa
   if (!active || !payload?.length) return null;
   return <div className="ez-tip"><strong>{String(label ?? '')}</strong>{payload.map((p, i) => <div key={i}><span style={{ background: p.color }} />{p.name}: <b>{fmt ? fmt(p.value, p.name) : String(p.value)}</b></div>)}</div>;
 }
-export const Gradiente = ({ id, de = '#3B82F6', ate = '#1D4ED8' }: { id: string; de?: string; ate?: string }) => <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={de} stopOpacity={0.95} /><stop offset="100%" stopColor={ate} stopOpacity={0.95} /></linearGradient></defs>;
+export const gradiente = (id: string, de = '#3B82F6', ate = '#1D4ED8') => <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={de} stopOpacity={0.95} /><stop offset="100%" stopColor={ate} stopOpacity={0.95} /></linearGradient></defs>;
 export function Vazio({ children }: { children: ReactNode }) { return <div className="ez-empty">{children}</div>; }

@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { EquipePage } from '@/components/escala/equipe';
-export const Route = createFileRoute('/_authenticated/escala/equipe')({ component: EquipePage });
+export const Route = createFileRoute('/_authenticated/escala/equipe')({ head: () => ({ meta: [{ title: 'Equipe e jornada atual | Kit Governança Interna' }, { name: 'description', content: 'Equipe e jornada atual do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Equipe e jornada atual | Kit Governança Interna' }, { property: 'og:description', content: 'Equipe e jornada atual do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: EquipePage });

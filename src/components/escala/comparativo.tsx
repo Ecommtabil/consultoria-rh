@@ -6,7 +6,7 @@ import { fmtH } from '@/lib/escala';
 import { useEscala } from './contexto';
 import { analisar } from './analise';
 import { relatorioDimensionamento } from './relatorioDimensionamento';
-import { brl, Card, ChartTip, Gradiente, Kpi, Vazio } from './ui';
+import { brl, Card, ChartTip, gradiente, Kpi, Vazio } from './ui';
 export const proximoMes = () => { const d = new Date(); d.setMonth(d.getMonth() + 1); return d.toISOString().slice(0, 7); };
 export function ComparativoPage() {
   const { cfg, colabs, ferias, dims, setores, patchSetor, client, loading } = useEscala(); const [mes, setMes] = useState(proximoMes()); const [setorCurva, setSetorCurva] = useState('');
@@ -19,12 +19,12 @@ export function ComparativoPage() {
     <div className="ez-kpis"><Kpi icon={Users} label="Equipe atual" value={a.equipe} /><Kpi icon={Target} label="Necessários na nova jornada" value={a.necessario} note={`${cfg.nova.tipo} · ${cfg.nova.horas}h`} /><Kpi icon={UserPlus} label="Contratações" value={a.contratacoes} tone={a.contratacoes ? 'warn' : 'ok'} /><Kpi icon={Wallet} label="Custo mensal" value={brl(a.custo)} note={`Encargos ${cfg.nova.encargos}%`} /></div>
     <Card title="Dimensionamento por setor" desc="Postos simultâneos podem ser ajustados; o padrão vem da equipe e da jornada atual predominante." action={<Button onClick={() => relatorioDimensionamento(client, cfg, a, mes)}><FileDown />Relatório de dimensionamento (PDF)</Button>}>
       <div className="ez-table-wrap"><table className="ez-table"><thead><tr><th>Setor</th><th>Postos simultâneos</th><th>Turnos</th><th>Equipe atual</th><th>Necessários</th><th>Contratações</th><th>Custo mensal</th></tr></thead><tbody>
-        {a.dims.map(d => <tr key={d.setor}><td><b>{d.setor}</b></td><td><input type="number" min={1} className="ez-num" aria-label={`Postos de ${d.setor}`} value={cfg.setores[d.setor]?.postos ?? ''} placeholder={String(d.postosPadrao)} onChange={e => patchSetor(d.setor, { postos: e.target.value ? Number(e.target.value) : null })} /></td><td className="tabular">{d.turnos.length}</td><td className="tabular">{d.equipe}</td><td className="tabular">{d.necessario}</td><td className={`tabular ${d.contratacoes ? 'ez-warn-text' : ''}`}>{d.contratacoes ? `+${d.contratacoes}` : '0'}</td><td className="tabular">{brl(d.custo)}</td></tr>)}
+        {a.dims.map(d => <tr key={d.setor}><td><b>{d.setor}</b></td><td><input type="number" min={1} className="ez-num" aria-label={`Postos de ${d.setor}`} value={cfg.setores[d.setor]?.postos ?? ''} placeholder={String(d.postosPadrao)} onChange={e => patchSetor(d.setor, { postos: e.target.value ? Number(e.target.value) : null })} /></td><td className="tabular">{d.turnos.length}</td><td className="tabular">{d.equipe}</td><td className="tabular">{d.necessario}</td><td className={`tabular ${d.contratacoes ? 'ez-warn-num' : ''}`}>{d.contratacoes ? `+${d.contratacoes}` : '0'}</td><td className="tabular">{brl(d.custo)}</td></tr>)}
         <tr className="ez-total"><td>Total</td><td /><td /><td>{a.equipe}</td><td>{a.necessario}</td><td>{a.contratacoes ? `+${a.contratacoes}` : 0}</td><td>{brl(a.custo)}</td></tr></tbody></table></div>
     </Card>
     <Card title="Equipe atual x necessário por setor">
       <div style={{ height: Math.max(180, barras.length * 64) }}><ResponsiveContainer><BarChart data={barras} layout="vertical" margin={{ left: 10, right: 40 }} barGap={4}>
-        <Gradiente id="gNec" de="#3B82F6" ate="#1D4ED8" /><CartesianGrid horizontal={false} strokeDasharray="3 3" stroke="var(--border)" />
+        {gradiente('gNec', '#3B82F6', '#1D4ED8')}<CartesianGrid horizontal={false} strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} /><YAxis type="category" dataKey="setor" width={110} tick={{ fontSize: 12, fill: 'var(--foreground)' }} />
         <Tooltip cursor={{ fill: 'var(--muted)' }} content={<ChartTip />} /><Legend wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="Hoje" fill="#94A3B8" radius={[0, 6, 6, 0]} animationDuration={700} /><Bar dataKey="Necessário" fill="url(#gNec)" radius={[0, 6, 6, 0]} animationDuration={800}><LabelList dataKey="rot" position="right" fill="#D97706" fontSize={12} fontWeight={600} /></Bar>
@@ -39,7 +39,7 @@ export function ComparativoPage() {
       </div>
       <div className="ez-card-head ez-mt"><h3>Cobertura ao longo do dia</h3><select aria-label="Setor da cobertura" value={fc?.setor ?? ''} onChange={e => setSetorCurva(e.target.value)}>{a.sem.map(f => <option key={f.setor}>{f.setor}</option>)}</select></div>
       <div style={{ height: 260 }}><ResponsiveContainer><ComposedChart data={curva} margin={{ left: -10, right: 10 }}>
-        <Gradiente id="gCob" de="#60A5FA" ate="#1D4ED8" /><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+        {gradiente('gCob', '#60A5FA', '#1D4ED8')}<CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
         <XAxis dataKey="hora" interval={7} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} /><YAxis allowDecimals={false} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
         <Tooltip content={<ChartTip fmt={v => (Array.isArray(v) ? `${v[0]}–${v[1]}` : String(v))} />} /><Legend wrapperStyle={{ fontSize: 12 }} />
         <Area type="monotone" dataKey="media" name="Presentes (média)" stroke="#1D4ED8" fill="url(#gCob)" fillOpacity={0.35} animationDuration={800} />

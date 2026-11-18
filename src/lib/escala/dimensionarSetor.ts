@@ -43,14 +43,14 @@ export function dimensionarSetor(cfg: EscalaConfig, setor: string, pessoas: Cola
   const necessarioHoras = Math.ceil((postos * horasAbertas) / (reg.horas * 60) - 1e-9);
   const necessario = Math.max(necessarioTurnos, necessarioHoras);
   const cobertura = necessidade.map(() => 0); const alocacao: Alocado[] = [];
-  const ordenadas = [...pessoas].sort((a, b) => ordemEntrada(a) - ordemEntrada(b) || a.nome.localeCompare(b.nome));
+  const ordenadas = [...pessoas].sort((a, b) => ordemEntrada(a) - ordemEntrada(b) || (a.nome ?? '').localeCompare(b.nome ?? ''));
   const ratio = (t: number) => cobertura[t]! / (necessidade[t] || 1);
   const menor = () => cobertura.reduce((best, _, t) => (ratio(t) < ratio(best) ? t : best), 0);
   let t = 0; const sobras: Alocado[] = [];
   for (const p of ordenadas) {
     const r = regimePessoa(p, cfg, setor, 'nova'); const contrib = Math.min(diasTrabalho(r.regime), abertos);
     while (t < turnos.length && cobertura[t]! >= necessidade[t]!) t++;
-    const a: Alocado = { id: p.id, nome: p.nome, turno: t, contrib, contratacao: false, regime: r.regime, horas: r.horas };
+    const a: Alocado = { id: p.id, nome: p.nome ?? '', turno: t, contrib, contratacao: false, regime: r.regime, horas: r.horas };
     if (t < turnos.length) { cobertura[t] = cobertura[t]! + contrib; alocacao.push(a); } else sobras.push(a);
   }
   for (const a of sobras) { a.turno = menor(); cobertura[a.turno] = cobertura[a.turno]! + a.contrib; alocacao.push(a); }

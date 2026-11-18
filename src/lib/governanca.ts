@@ -73,7 +73,7 @@ export function parseColaboradores(rows: unknown[][]): { registros: Record<strin
     };
     const sab = dia('sab', 'Sábado'); const dom = dia('dom', 'Domingo');
     let salario: number | null = null; if (txt('salario')) { try { salario = numberBR(get('salario')); } catch { av.push('Salário inválido'); } }
-    registros.push({ nome, matricula: txt('matricula') || null, setor: setorCol === undefined ? null : String(row[setorCol] ?? '').trim() || null, departamento: txt('departamento') || null, cargo: txt('cargo') || null, admissao, sexo, jornada_atual: jornada, horas_semanais: horas, entrada, saida, sab_modo: sab.modo, sab_entrada: sab.ent, sab_saida: sab.sai, dom_modo: dom.modo, dom_entrada: dom.ent, dom_saida: dom.sai, salario });
+    registros.push({ _linha: i + 2, nome, matricula: txt('matricula') || null, setor: setorCol === undefined ? null : String(row[setorCol] ?? '').trim() || null, departamento: txt('departamento') || null, cargo: txt('cargo') || null, admissao, sexo, jornada_atual: jornada, horas_semanais: horas, entrada, saida, sab_modo: sab.modo, sab_entrada: sab.ent, sab_saida: sab.sai, dom_modo: dom.modo, dom_entrada: dom.ent, dom_saida: dom.sai, salario });
     if (av.length) avisos.push({ linha: i + 2, nome, avisos: av });
   });
   return { registros, avisos };

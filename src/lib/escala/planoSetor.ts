@@ -19,7 +19,7 @@ export function janelasProprias(c: Colab, sc: SetorResolvido, regime: Regime, ho
     return util;
   });
 }
-export function planoSetor(cfg: EscalaConfig, setor: string, colabs: Colab[], cenario: 'atual' | 'nova', opts: { contratar?: boolean; dim?: Dimensionamento } = {}): Plano {
+export function planoSetor(cfg: EscalaConfig, setor: string, colabs: Colab[], cenario: 'atual' | 'nova', opts: { contratar?: boolean | undefined; dim?: Dimensionamento | undefined } = {}): Plano {
   const sc = setorCfg(cfg, setor); const base = horarioBase(sc); const sab = horarioDia(sc, 5);
   const sabCurto = !!(sab && base && minutos(sab) < minutos(base)); const completar = !!sc.completarCarga;
   const rodizio = sc.rodizioSab ? sc.rodizioSab : sabCurto && completar ? 0 : null;
@@ -39,12 +39,12 @@ export function planoSetor(cfg: EscalaConfig, setor: string, colabs: Colab[], ce
     needDia = [0, 1, 2, 3, 4, 5, 6].map(d => Array.from({ length: Math.max(T, 1) }, (_, g) => (dim.turnos[g]?.[d] ? postos : 0)));
   } else {
     const chaves: string[] = []; const somaDias: number[] = [];
-    for (const c of [...colabs].sort((a, b) => a.nome.localeCompare(b.nome))) {
+    for (const c of [...colabs].sort((a, b) => (a.nome ?? '').localeCompare(b.nome ?? ''))) {
       const r = regimePessoa(c, cfg, setor, 'atual'); const janelas = janelasProprias(c, sc, r.regime, r.horas);
       const util = janelas.find((j, d) => d < 5 && j && j !== 'folga') ?? janelas.find(j => j && j !== 'folga');
       const key = util && util !== 'folga' ? `${util.ini}-${util.fim}` : '-'; let g = chaves.indexOf(key); if (g < 0) { g = chaves.length; chaves.push(key); somaDias.push(0); }
       somaDias[g] = somaDias[g]! + Math.min(diasTrabalho(r.regime), abertos);
-      membros.push({ p: { id: c.id, nome: c.nome, setor, sexo: c.sexo, regime: r.regime, horas: r.horas, grupo: g }, janelas: fixas(c, janelas), grupoDia: Array(7).fill(g) });
+      membros.push({ p: { id: c.id, nome: c.nome ?? '', setor, sexo: c.sexo, regime: r.regime, horas: r.horas, grupo: g }, janelas: fixas(c, janelas), grupoDia: Array(7).fill(g) });
     }
     const need = somaDias.map(s => Math.max(1, Math.floor(s / abertos)));
     needDia = [0, 1, 2, 3, 4, 5, 6].map(d => need.map((n, g) => (membros.some(m => m.p.grupo === g && m.janelas[d] && m.janelas[d] !== 'folga') ? n : 0)));

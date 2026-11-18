@@ -1,3 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { MensalPage } from '@/components/escala/mensal';
-export const Route = createFileRoute('/_authenticated/escala/mensal')({ component: MensalPage });
+export const Route = createFileRoute('/_authenticated/escala/mensal')({ head: () => ({ meta: [{ title: 'Escala mensal | Kit Governança Interna' }, { name: 'description', content: 'Escala mensal do módulo Escalas e dimensionamento.' }, { property: 'og:title', content: 'Escala mensal | Kit Governança Interna' }, { property: 'og:description', content: 'Escala mensal do módulo Escalas e dimensionamento.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }), component: MensalPage });
