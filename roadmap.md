@@ -8,4 +8,5 @@
 - [x] Prompt 6 — almoços e folgas.
 - [x] Prompt 7 — quadro semanal e PDF.
 - [x] Prompt 8 — relatório de dimensionamento, testes e exclusão em duas etapas.
-- [ ] Documentos e Cargos e salários — aguardam briefing próprio (estilos de Prompt 1 para essas telas dependem disso).
+- [x] Documentos — Regimento, Código de Ética, Termo de Ciência (Plano de Cargos aguarda briefing de Cargos).
+- [ ] Cargos e salários — aguarda briefing próprio.
