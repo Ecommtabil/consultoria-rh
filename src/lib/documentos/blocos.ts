@@ -1,4 +1,5 @@
 import type { Tables } from '@/integrations/supabase/types';
+import { amplitude, letras, pctBR, porFamilia, steps as calcSteps, type CargoLinha } from '@/lib/cargos/calc';
 /** Estrutura única de blocos: usada pela pré-visualização, pelo Word e pelo PDF. */
 export type Bloco =
   | { t: 'title' | 'h1' | 'h2' | 'p' | 'li' | 'note'; text: string }
@@ -8,11 +9,12 @@ export type Bloco =
   | { t: 'break' };
 export type DocId = 'regimento' | 'codigo' | 'termo' | 'plano';
 export type Capa = { empresa: string; titulo: string; subtitulo: string; versao: string; aprovado: string };
-export type Documento = { id: DocId; titulo: string; cabecalho: string; capa: Capa | null; blocos: Bloco[]; arquivo: string };
+export type Tema = { cor: string; fonte: 'serif' | 'sans' };
+export type Documento = { id: DocId; titulo: string; cabecalho: string; capa: Capa | null; blocos: Bloco[]; arquivo: string; tema?: Tema };
 type Cliente = Partial<Tables<'clientes'>>;
 type Sancao = Pick<Tables<'sancoes'>, 'situacao' | 'medida' | 'recorrencia'>;
 type Colab = Pick<Tables<'colaboradores'>, 'nome' | 'cargo' | 'departamento' | 'admissao'>;
-export type Entrada = { cliente: Cliente; sancoes: Sancao[]; colaboradores: Colab[]; termoModo: 'branco' | 'equipe' };
+export type Entrada = { cliente: Cliente; sancoes: Sancao[]; colaboradores: Colab[]; termoModo: 'branco' | 'equipe'; cargos?: CargoLinha[]; steps?: number; pct?: number };
 
 const A = '⟦', B = '⟧';
 export const ph = (label: string) => `${A}${label}${B}`;
@@ -35,7 +37,9 @@ export const PENDENCIAS: [keyof Tables<'clientes'>, string][] = [
 ];
 export const preenchido = (v: unknown) => (typeof v === 'number' ? v > 0 : v != null && String(v).trim() !== '');
 
-export const NOMES: Record<DocId, string> = { regimento: 'Regimento Interno', codigo: 'Código de Ética e Conduta', termo: 'Termo de Ciência', plano: 'Plano de Cargos' };
+export const NOMES: Record<DocId, string> = { regimento: 'Regimento Interno', codigo: 'Código de Ética e Conduta', termo: 'Termo de Ciência', plano: 'Plano de Cargos, Salários e Carreira' };
+export const pendenciasDe = (id: DocId) => (id === 'plano' ? PENDENCIAS.filter(([k]) => ['nome', 'cidade_uf', 'vigencia', 'aprovado_por'].includes(k)) : PENDENCIAS);
+const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 export function montar(id: DocId, e: Entrada): Documento {
   const c = e.cliente; const emp = val(c.nome, 'NOME DA EMPRESA'); const titulo = NOMES[id];
@@ -133,7 +137,35 @@ export function montar(id: DocId, e: Entrada): Documento {
     ];
     const pessoas = e.termoModo === 'equipe' ? e.colaboradores.filter(p => p.nome?.trim()) : [];
     blocos = pessoas.length ? pessoas.flatMap((p, i) => (i ? [{ t: 'break' } as Bloco, ...pagina(p)] : pagina(p))) : pagina(null);
+  } else if (id === 'plano') {
+    cp = capa('Estrutura de cargos, faixas salariais e trilhas de crescimento');
+    const n = e.steps ?? 5, pct = e.pct ?? 4, ls = letras(n), grupos = porFamilia(e.cargos ?? []);
+    const pctTxt = `${String(pct).replace('.', ',')}%`;
+    blocos = [
+      { t: 'h1', text: '1. Objetivo' },
+      { t: 'p', text: `Este Plano estabelece a estrutura de cargos, as faixas salariais e os critérios de progressão de ${emp}, com a finalidade de garantir equidade interna, transparência e perspectiva de crescimento profissional aos colaboradores.` },
+      { t: 'h1', text: '2. Estrutura' },
+      { t: 'p', text: `Os cargos estão organizados em famílias e níveis. Cada cargo possui uma faixa salarial com ${n} steps (${ls.join(', ')}), com diferença de ${pctTxt} entre steps, resultando em amplitude de ${pctBR(amplitude(n, pct))} entre o primeiro e o último step.` },
+      { t: 'li', text: 'Trilha técnica: crescimento por especialização e domínio técnico, sem gestão de pessoas.' },
+      { t: 'li', text: 'Trilha de gestão: liderança de equipes e responsabilidade por resultados.' },
+      { t: 'h1', text: '3. Tabela salarial' },
+      ...(grupos.length ? grupos.flatMap(g => [{ t: 'h2', text: g.familia } as Bloco, { t: 'table', head: ['Cargo', 'Nível', ...ls], rows: g.cargos.map(c => [`${c.cargo ?? ''}${c.trilha === 'Gestão' ? ' (gestão)' : ''}`, String(c.nivel ?? ''), ...calcSteps(c.salario_base ?? 0, n, pct).map(moeda)]) } as Bloco]) : [{ t: 'p', text: ph('CADASTRE OS CARGOS EM CARGOS E SALÁRIOS') } as Bloco]),
+      { t: 'h1', text: '4. Progressão horizontal (mérito)' },
+      { t: 'p', text: 'A progressão horizontal corresponde à passagem de um step para o seguinte dentro da faixa do mesmo cargo, observados cumulativamente os seguintes critérios:' },
+      { t: 'li', text: 'interstício mínimo de 12 meses desde a última progressão ou admissão;' },
+      { t: 'li', text: 'avaliação de desempenho satisfatória no período;' },
+      { t: 'li', text: 'ausência de medida disciplinar grave nos últimos 12 meses;' },
+      { t: 'li', text: 'disponibilidade orçamentária da empresa.' },
+      { t: 'h1', text: '5. Promoção vertical' },
+      { t: 'p', text: 'A promoção vertical corresponde à mudança para cargo de nível superior, condicionada à existência de vaga e ao atendimento dos requisitos do cargo. O colaborador promovido será enquadrado no primeiro step da nova faixa que represente aumento em relação ao salário atual.' },
+      ...grupos.flatMap(g => [{ t: 'h2', text: g.familia } as Bloco, { t: 'table', head: ['Cargo', 'Trilha', 'Tempo mínimo', 'Requisitos'], rows: g.cargos.map(c => [c.cargo ?? '', c.trilha ?? 'Técnica', c.tempo_minimo_meses ? `${c.tempo_minimo_meses} meses` : '—', c.requisitos?.trim() || '—']) } as Bloco]),
+      { t: 'h1', text: '6. Disposições gerais' },
+      { t: 'p', text: 'Este Plano será revisado anualmente, considerando a convenção coletiva da categoria, pesquisas salariais de mercado e a saúde financeira da empresa.' },
+      { t: 'p', text: 'Os casos omissos serão decididos pela diretoria em conjunto com a área de Recursos Humanos.' },
+      { t: 'note', text: 'Nota do consultor: nos termos do art. 461, §§ 2º e 3º, da CLT, o plano de cargos e salários pode ser adotado por norma interna da empresa ou por negociação coletiva, dispensada a homologação ou o registro em órgão público, e as promoções podem seguir critérios de merecimento e/ou antiguidade. Recomenda-se a validação jurídica do documento e a conferência dos pisos salariais da convenção coletiva aplicável.' },
+    ];
   }
   if (!notas) blocos = blocos.filter(b => b.t !== 'note');
-  return { id, titulo, cabecalho: plano(`${emp} — ${titulo}`), capa: cp, blocos, arquivo: `${semAcento(titulo)}_${semAcento(plano(emp))}` };
+  const arquivo = id === 'plano' ? `Plano_de_Cargos_e_Salarios_${semAcento(plano(emp))}` : `${semAcento(titulo)}_${semAcento(plano(emp))}`;
+  return { id, titulo, cabecalho: plano(`${emp} — ${titulo}`), capa: cp, blocos, arquivo, ...(id === 'plano' ? { tema: { cor: '1E3A8A', fonte: 'sans' as const } } : {}) };
 }

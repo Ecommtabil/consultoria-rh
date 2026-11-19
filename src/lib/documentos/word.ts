@@ -1,6 +1,6 @@
 import { AlignmentType, BorderStyle, Document, Footer, Header, Packer, PageBreak, PageNumber, Paragraph, ShadingType, Table, TableCell, TableRow, TextRun, WidthType } from 'docx';
 import { plano, type Bloco, type Documento } from './blocos';
-const PET = '0F4C5C', MOS = 'C9A227', ZEB = 'EEF4F5', CIN = '6B7280', F = 'Georgia';
+let PET = '0F4C5C', MOS = 'C9A227', ZEB = 'EEF4F5', F = 'Georgia'; const CIN = '6B7280';
 const r = (text: string, o: Record<string, unknown> = {}) => new TextRun({ text: plano(text), font: F, size: 22, ...o });
 const cel = (t: string, fill: string, head = false) => new TableCell({ shading: { type: ShadingType.CLEAR, fill, color: 'auto' }, margins: { top: 60, bottom: 60, left: 100, right: 100 }, children: [new Paragraph({ children: [r(t, head ? { bold: true, color: 'FFFFFF', size: 20 } : { size: 20 })] })] });
 function bloco(b: Bloco): (Paragraph | Table)[] {
@@ -19,6 +19,7 @@ function bloco(b: Bloco): (Paragraph | Table)[] {
 }
 const A4 = { page: { size: { width: 11906, height: 16838 }, margin: { top: 1418, bottom: 1418, left: 1418, right: 1418 } } };
 export async function gerarWord(d: Documento): Promise<Blob> {
+  PET = d.tema?.cor ?? '0F4C5C'; F = d.tema?.fonte === 'sans' ? 'Calibri' : 'Georgia'; ZEB = d.tema ? 'F1F5F9' : 'EEF4F5'; MOS = d.tema ? 'D97706' : 'C9A227';
   const header = new Header({ children: [new Paragraph({ border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: 'D1D5DB', space: 4 } }, children: [r(d.cabecalho, { size: 16, color: CIN })] })] });
   const footer = new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ font: F, size: 16, color: CIN, children: ['Página ', PageNumber.CURRENT] })] })] });
   const sections = [];

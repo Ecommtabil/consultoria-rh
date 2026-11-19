@@ -21,6 +21,7 @@ export type Database = {
           familia: string | null
           id: string
           nivel: number | null
+          ordem: number | null
           requisitos: string | null
           salario_base: number | null
           tempo_minimo_meses: number | null
@@ -32,6 +33,7 @@ export type Database = {
           familia?: string | null
           id?: string
           nivel?: number | null
+          ordem?: number | null
           requisitos?: string | null
           salario_base?: number | null
           tempo_minimo_meses?: number | null
@@ -43,6 +45,7 @@ export type Database = {
           familia?: string | null
           id?: string
           nivel?: number | null
+          ordem?: number | null
           requisitos?: string | null
           salario_base?: number | null
           tempo_minimo_meses?: number | null
