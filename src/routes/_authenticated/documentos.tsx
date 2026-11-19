@@ -5,6 +5,7 @@ import { FileDown, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Shell, PageHeading, NoClient } from '@/components/governanca/shell';
+import { GeradorRegimento } from '@/components/regimento/Gerador';
 import { useApp } from '@/components/governanca/provider';
 import { supabase } from '@/integrations/supabase/client';
 import type { Cliente } from '@/lib/governanca';
@@ -30,17 +31,17 @@ function Docs({client}:{client:Cliente}){
   async function pdf(){try{const {gerarPdf}=await import('@/lib/documentos/pdf');gerarPdf(doc).save(`${doc.arquivo}.pdf`);}catch(e){toast.error(`Falha ao gerar PDF: ${(e as Error).message}`);}}
   return <>
     <nav className="doc-tabs" aria-label="Documentos">{(Object.keys(NOMES) as DocId[]).map(id=><button key={id} type="button" className={aba===id?'active':''} onClick={()=>setAba(id)}><FileText size={15}/>{NOMES[id]}</button>)}</nav>
-    <div className="doc-layout">
+    {aba==='regimento'?<GeradorRegimento cliente={client}/>:<div className="doc-layout">
       <aside className="doc-side">
         <section><h3>Pendências</h3><ul className="pend-list">{PENDENCIAS.map(([k,l])=>{const ok=preenchido(client[k]);return <li key={k}><span className={`pend-dot ${ok?'ok':'pend'}`} aria-hidden/>{l}<span className="sr-only">{ok?' preenchido':' pendente'}</span></li>;})}</ul>
           <Button asChild variant="outline" className="w-full"><Link to="/empresa"><Pencil/>Editar dados da empresa</Link></Button></section>
         <label className="checkbox-field"><input type="checkbox" checked={notas} onChange={e=>toggleNotas(e.target.checked)}/>Incluir notas do consultor</label>
         {aba==='termo'&&<section><h3>Modelo</h3><select className="doc-select" value={modo} onChange={e=>setModo(e.target.value as 'branco'|'equipe')} aria-label="Modelo do termo"><option value="branco">Em branco (1 página)</option><option value="equipe">Um por colaborador ({colaboradores.filter(c=>c.nome?.trim()).length})</option></select></section>}
-        {aba==='regimento'&&<section><h3>Matriz de sanções</h3>{sancoes.map(s=><div key={s.id} className="sancao-edit">{(['situacao','medida','recorrencia'] as const).map(k=><input key={k} aria-label={k} placeholder={{situacao:'Situação',medida:'Medida',recorrencia:'Recorrência'}[k]} value={s[k]??''} onChange={e=>editSancao(s.id,k,e.target.value)} onBlur={e=>void salvar(supabase.from('sancoes').update({[k]:e.target.value} as Partial<Record<typeof k,string>>).eq('id',s.id))}/>)}<Button variant="ghost" size="sm" onClick={()=>delSancao(s.id)}><Trash2/>Remover</Button></div>)}<Button variant="outline" size="sm" onClick={addSancao}><Plus/>Adicionar sanção</Button></section>}
+        
         <div className="doc-actions"><Button onClick={word} disabled={vazio}><FileDown/>Baixar em Word</Button><Button variant="outline" onClick={pdf} disabled={vazio}><FileDown/>Baixar em PDF</Button></div>
       </aside>
       <Previa doc={doc}/>
-    </div></>;
+    </div>}</>;
 }
 function T({s}:{s:string}){return <>{segmentos(s).map((p,i)=>p.ph?<mark key={i} className="doc-ph">{p.text}</mark>:<span key={i}>{p.text}</span>)}</>;}
 function B({b}:{b:Bloco}){switch(b.t){

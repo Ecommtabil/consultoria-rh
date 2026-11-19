@@ -37,3 +37,4 @@ use the editor.
 
 - Data access requires an office/admin row in public.user_roles (is_office_member()); signup alone grants nothing, preventing strangers from reading client data.
 - Documents are one block list per document (src/lib/documentos/blocos.ts) rendered by preview, Word and PDF, so all three always match; document PDFs use their own A4 cover/header layout.
+- The Regimento tab is a standalone generator: seed in src/data/regimento.ts, pure assembly in src/lib/regimento/montar.ts (tested), vector PDF in src/lib/regimento/pdf.ts; its green/gold tokens are scoped to .rg so the app theme is untouched.
