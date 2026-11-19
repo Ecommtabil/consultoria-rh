@@ -10,4 +10,5 @@
 - [x] Prompt 8 — relatório de dimensionamento, testes e exclusão em duas etapas.
 - [x] Documentos — Regimento, Código de Ética, Termo de Ciência (Plano de Cargos aguarda briefing de Cargos).
 - [x] Gerador de Regimento Interno (36 artigos, resumo pode/não pode, PDF).
+- [x] Código de Ética no mesmo gerador, com inclusão de artigos e capítulos.
 - [ ] Cargos e salários — aguarda briefing próprio.

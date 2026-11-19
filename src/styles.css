@@ -636,3 +636,14 @@ h1 {color:var(--foreground);font-size:30px;}
 .rg-assina { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:4rem; font-size:13.5px; } .rg-assina span { width:280px; max-width:100%; border-top:1px solid var(--rg-ink); margin-bottom:.4rem; } .rg-assina p { color:var(--rg-muted); }
 @media (max-width:880px) { .rg { grid-template-columns:1fr; } .rg-side { position:static; height:auto; border-right:0; border-bottom:1px solid var(--rg-border); } .rg-sheet { margin:1rem .5rem; padding:28px 22px; font-size:14.5px; } }
 @media print { .app-header, .page-heading, .doc-tabs, .workspace-footer, .rg-side, .rg-bar { display:none !important; } .rg { display:block; border:0; background:#fff; } .rg-sheet { box-shadow:none; border:0; margin:0; max-width:none; padding:0; } }
+.rg-param.largo { flex-direction:column; align-items:stretch; } .rg-param.largo .rg-param-in, .rg-param.largo .rg-campo { width:100%; } .rg-param.largo input, .rg-param.largo textarea { width:100% !important; text-align:left !important; font-family:"IBM Plex Sans",sans-serif !important; }
+.rg-campo { display:inline-flex; align-items:center; gap:.3rem; }
+.rg textarea, .rg select { font-size:14px; border-radius:6px; background:var(--rg-surface-alt); border:1px solid var(--rg-border); color:var(--rg-ink); padding:.45rem .6rem; font-family:inherit; resize:vertical; }
+.rg textarea:focus, .rg select:focus { outline:none; border-color:var(--rg-accent); box-shadow:0 0 0 3px var(--rg-accent-soft); }
+.rg-art-row { display:flex; align-items:flex-start; gap:.3rem; } .rg-art-row .rg-art { flex:1; }
+.rg-novo { font-family:"IBM Plex Mono",monospace; font-size:9.5px; color:var(--rg-gold); background:var(--rg-gold-soft); border-radius:3px; padding:0 4px; margin-right:.35rem; }
+.rg-add { display:inline-flex; align-items:center; gap:.3rem; font-size:12px; font-weight:600; color:var(--rg-accent); padding:.35rem .2rem; align-self:flex-start; }
+.rg-form { display:flex; flex-direction:column; gap:.45rem; padding:.5rem; border:1px dashed var(--rg-border); border-radius:8px; margin:.3rem 0; }
+.rg-form-actions { display:flex; justify-content:flex-end; align-items:center; gap:.6rem; }
+.rg-novo-cap { flex-direction:row; } .rg-novo-cap input { flex:1; min-width:0; }
+.rg-primary.sm { padding:.4rem .7rem; font-size:12.5px; }

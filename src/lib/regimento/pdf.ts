@@ -1,10 +1,10 @@
 import jsPDF from 'jspdf';
-import { cidadeData, FECHAMENTO, INTRO, nomeEmpresa, ordinal, type Empresa, type Montado, type Parte } from './montar';
+import { cidadeData, nomeEmpresa, ordinal, REGIMENTO, type Empresa, type Modelo, type Montado, type Parte } from './montar';
 type RGB = [number, number, number];
 const GOLD: RGB = [147, 112, 47], OK: RGB = [61, 122, 74], BAD: RGB = [165, 69, 58], INK: RGB = [32, 43, 35], MUTED: RGB = [93, 106, 95], LINE: RGB = [200, 205, 195];
 const ML = 22, MR = 22, MT = 20, MB = 22, PW = 210, PH = 297, W = PW - ML - MR;
 const plano = (p: Parte[]) => p.map(x => x.text).join('');
-export function gerarRegimentoPdf(m: Montado, e: Empresa): jsPDF {
+export function gerarRegimentoPdf(m: Montado, e: Empresa, mod: Modelo = REGIMENTO): jsPDF {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' }); let y = MT;
   const lh = (pt: number) => pt * 0.42;
   const need = (h: number) => { if (y + h > PH - MB) { doc.addPage(); y = MT; } };
@@ -23,12 +23,12 @@ export function gerarRegimentoPdf(m: Montado, e: Empresa): jsPDF {
   // Timbre
   font('times', 'bold', 16); centro(emp.toUpperCase(), 16);
   if (e.cnpj.trim()) { font('times', 'normal', 9.5, MUTED); centro(`CNPJ: ${e.cnpj.trim()}`, 9.5); }
-  y += 3; font('times', 'bold', 13); doc.setCharSpace(0.8); centro('REGIMENTO INTERNO', 13); doc.setCharSpace(0);
-  font('times', 'italic', 9.5, MUTED); centro('Normas e diretrizes para colaboradores', 9.5);
+  y += 3; font('times', 'bold', 13); doc.setCharSpace(0.8); centro(mod.tituloDoc, 13); doc.setCharSpace(0);
+  font('times', 'italic', 9.5, MUTED); centro(mod.subtituloDoc, 9.5);
   if (cd) { font('times', 'normal', 9, MUTED); centro(cd, 9); }
   y += 3; doc.setDrawColor(...INK); doc.setLineWidth(0.6); doc.line(ML, y, PW - MR, y); y += 6;
   // Introdução
-  font('times', 'normal', 10, MUTED); for (const p of INTRO) { justificado(p, 10); y += 2.5; }
+  font('times', 'normal', 10, MUTED); for (const p of m.intro) { justificado(plano(p), 10); y += 2.5; }
   // Resumo
   if (m.pode.length || m.naoPode.length) {
     y += 3; need(24); font('helvetica', 'bold', 8.5, GOLD); doc.text('GUIA RÁPIDO', ML, y + 3); y += 5;
@@ -53,9 +53,9 @@ export function gerarRegimentoPdf(m: Montado, e: Empresa): jsPDF {
     for (const a of c.artigos) { font('times', 'normal', 10); justificado(`${ordinal(a.numero)}. ${plano(a.partes)}`, 10); y += 3.4; }
   }
   // Fechamento + assinatura sempre juntos
-  font('times', 'normal', 10); const fl = (doc.splitTextToSize(FECHAMENTO, W) as string[]).length;
+  font('times', 'normal', 10); const fl = (doc.splitTextToSize(mod.fechamento, W) as string[]).length;
   y += 4; need(fl * lh(10) * 1.2 + 8 + 38);
-  justificado(FECHAMENTO, 10); if (cd) { y += 2; doc.text(`${cd}.`, ML, y + lh(10)); y += lh(10) + 2; }
+  justificado(mod.fechamento, 10); if (cd) { y += 2; doc.text(`${cd}.`, ML, y + lh(10)); y += lh(10) + 2; }
   y += 24; doc.setDrawColor(...INK); doc.setLineWidth(0.3); doc.line(PW / 2 - 40, y, PW / 2 + 40, y); y += 5;
   font('times', 'bold', 9.5); doc.text(`${emp}${e.cnpj.trim() ? ` — CNPJ: ${e.cnpj.trim()}` : ''}`, PW / 2, y, { align: 'center' }); y += 4.5;
   font('times', 'normal', 9); doc.text(`${e.representante.trim() || 'Representante'} — Representante Legal`, PW / 2, y, { align: 'center' });

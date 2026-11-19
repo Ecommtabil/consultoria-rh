@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Shell, PageHeading, NoClient } from '@/components/governanca/shell';
 import { GeradorRegimento } from '@/components/regimento/Gerador';
+import { MODELOS } from '@/lib/regimento/montar';
 import { useApp } from '@/components/governanca/provider';
 import { supabase } from '@/integrations/supabase/client';
 import type { Cliente } from '@/lib/governanca';
@@ -31,7 +32,7 @@ function Docs({client}:{client:Cliente}){
   async function pdf(){try{const {gerarPdf}=await import('@/lib/documentos/pdf');gerarPdf(doc).save(`${doc.arquivo}.pdf`);}catch(e){toast.error(`Falha ao gerar PDF: ${(e as Error).message}`);}}
   return <>
     <nav className="doc-tabs" aria-label="Documentos">{(Object.keys(NOMES) as DocId[]).map(id=><button key={id} type="button" className={aba===id?'active':''} onClick={()=>setAba(id)}><FileText size={15}/>{NOMES[id]}</button>)}</nav>
-    {aba==='regimento'?<GeradorRegimento cliente={client}/>:<div className="doc-layout">
+    {aba==='regimento'||aba==='codigo'?<GeradorRegimento key={aba} cliente={client} modelo={MODELOS[aba]}/>:<div className="doc-layout">
       <aside className="doc-side">
         <section><h3>Pendências</h3><ul className="pend-list">{PENDENCIAS.map(([k,l])=>{const ok=preenchido(client[k]);return <li key={k}><span className={`pend-dot ${ok?'ok':'pend'}`} aria-hidden/>{l}<span className="sr-only">{ok?' preenchido':' pendente'}</span></li>;})}</ul>
           <Button asChild variant="outline" className="w-full"><Link to="/empresa"><Pencil/>Editar dados da empresa</Link></Button></section>
