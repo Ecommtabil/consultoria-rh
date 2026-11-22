@@ -11,4 +11,6 @@
 - [x] Documentos — Regimento, Código de Ética, Termo de Ciência (Plano de Cargos aguarda briefing de Cargos).
 - [x] Gerador de Regimento Interno (36 artigos, resumo pode/não pode, PDF).
 - [x] Código de Ética no mesmo gerador, com inclusão de artigos e capítulos.
-- [ ] Cargos e salários — aguarda briefing próprio.
+- [x] Cargos e salários: estrutura, matriz, trilhas e Plano (documento).
+- [x] 6 menus principais com submenus verticais (barra lateral à esquerda).
+- [ ] Conformidade trabalhista e Indicadores de RH — aguardam briefing.
