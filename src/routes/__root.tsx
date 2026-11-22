@@ -108,11 +108,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Instalado antes de qualquer module script: um module que falha ao importar
+// derruba a página inteira, e nesse momento o React ainda não montou.
+const EARLY_RECOVERY = `try{
+var K='kit-gov-chunk-reload',RE=/Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module|ChunkLoadError/i;
+var rec=function(){try{var l=Number(sessionStorage.getItem(K)||0);if(l&&Date.now()-l<30000)return;sessionStorage.setItem(K,String(Date.now()));}catch(e){}window.location.reload();};
+window.addEventListener('vite:preloadError',rec);
+window.addEventListener('error',function(e){var t=e&&e.target;if(t&&t.tagName==='SCRIPT'){rec();return;}if(RE.test(String((e&&e.message)||'')))rec();},true);
+window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;if(RE.test(String((r&&r.message)||r||'')))rec();});
+}catch(e){}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: EARLY_RECOVERY }} />
       </head>
       <body>
         {children}
@@ -124,18 +135,6 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useEffect(() => {
-    // Arquivos desatualizados após uma atualização: recarrega a página uma única vez.
-    const isChunkError = (m: string) => /Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(m);
-    const recover = () => { if (sessionStorage.getItem('chunk-reload')) return; sessionStorage.setItem('chunk-reload', '1'); window.location.reload(); };
-    const onRej = (e: PromiseRejectionEvent) => { if (isChunkError(String(e.reason?.message ?? e.reason))) recover(); };
-    const onErr = (e: ErrorEvent) => { if (isChunkError(e.message)) recover(); };
-    window.addEventListener('vite:preloadError', recover);
-    window.addEventListener('unhandledrejection', onRej);
-    window.addEventListener('error', onErr);
-    const t = setTimeout(() => sessionStorage.removeItem('chunk-reload'), 10000);
-    return () => { clearTimeout(t); window.removeEventListener('vite:preloadError', recover); window.removeEventListener('unhandledrejection', onRej); window.removeEventListener('error', onErr); };
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
