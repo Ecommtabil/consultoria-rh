@@ -1,17 +1,19 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { Building2, Upload, Users, FileText, CalendarDays, ChartNoAxesCombined, ShieldCheck, ChevronDown, Moon, Sun, LogOut, ArrowUpRight, FolderOpen, Plus, Check, Loader2, AlertCircle } from 'lucide-react';
+import { Building2, Upload, Users, FileText, CalendarDays, ChartNoAxesCombined, ShieldCheck, ChevronDown, Moon, Sun, LogOut, ArrowUpRight, FolderOpen, Plus, Check, Loader2, AlertCircle, Scale, BarChart3 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApp } from './provider';
 import { supabase } from '@/integrations/supabase/client';
-const stages=[
-  {to:'/importar',label:'Importar dados',icon:Upload},
-  {to:'/empresa',label:'Empresa e equipe',icon:Users},
-  {to:'/documentos',label:'Documentos',icon:FileText},
-  {to:'/escala',label:'Escalas e dimensionamento',icon:CalendarDays},
-  {to:'/cargos',label:'Cargos e salários',icon:ChartNoAxesCombined},
+const menus=[
+  {label:'Clientes',icon:Building2,items:[{to:'/clientes',label:'Meus clientes',icon:Building2},{to:'/importar',label:'Importar dados',icon:Upload},{to:'/empresa',label:'Empresa e equipe',icon:Users}]},
+  {label:'Conformidade trabalhista',icon:Scale,items:[{to:'/conformidade',label:'Conformidade trabalhista',icon:Scale}]},
+  {label:'Normas e políticas internas',icon:FileText,items:[{to:'/documentos',label:'Normas e políticas internas',icon:FileText}]},
+  {label:'Jornadas e escalas',icon:CalendarDays,items:[{to:'/escala',label:'Escalas e dimensionamento',icon:CalendarDays}]},
+  {label:'Remuneração e incentivos',icon:ChartNoAxesCombined,items:[{to:'/cargos',label:'Cargos e salários',icon:ChartNoAxesCombined}]},
+  {label:'Indicadores de RH',icon:BarChart3,items:[{to:'/indicadores',label:'Indicadores de RH',icon:BarChart3}]},
 ] as const;
+const isActive=(p:string,to:string)=>p===to||p.startsWith(`${to}/`)||(to==='/clientes'&&p==='/');
 export function Brand(){return <div className="brand"><span className="brand-symbol"><ShieldCheck size={20}/></span><div><strong>Kit Governança</strong><span>INTERNA</span></div></div>;}
 function SaveIndicator(){const {saveState}=useApp();
   if(saveState==='saving')return <span className="save-indicator saving" role="status"><Loader2 size={13} className="animate-spin"/>Salvando…</span>;
@@ -35,10 +37,10 @@ export function Shell({children}:{children:ReactNode}){
         <Button variant="ghost" size="icon" onClick={toggleDark} title={dark?'Modo claro':'Modo escuro'} aria-label={dark?'Modo claro':'Modo escuro'}>{dark?<Sun/>:<Moon/>}</Button>
         {user?<><span className="user-avatar" title={user.email}>{user.email?.slice(0,2).toUpperCase()}</span><Button variant="ghost" size="icon" title="Sair" aria-label="Sair" onClick={logout}><LogOut/></Button></>:<Button asChild variant="outline" size="sm"><Link to="/auth">Entrar<ArrowUpRight/></Link></Button>}
       </div>
-      <nav className="main-tabs" aria-label="Seções">
-        <Link to="/clientes" className={`main-tab ${pathname==='/'||pathname==='/clientes'?'active':''}`}><Building2/>Meus clientes<span className="nav-count">{clients.length}</span></Link>
-        {stages.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`main-tab ${pathname===to||pathname.startsWith(`${to}/`)?'active':''}`}><Icon/>{label}</Link>)}
+      <nav className="main-tabs" aria-label="Menus principais">
+        {menus.map(m=>{const Icon=m.icon;return <Link key={m.label} to={m.items[0].to} className={`main-tab ${m.items.some(i=>isActive(pathname,i.to))?'active':''}`}><Icon/>{m.label}</Link>;})}
       </nav>
+      {(()=>{const cur=menus.find(m=>m.items.some(i=>isActive(pathname,i.to)));if(!cur||cur.items.length<2)return null;return <nav className="sub-tabs" aria-label={`Submenu ${cur.label}`}>{cur.items.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`sub-tab ${isActive(pathname,to)?'active':''}`}><Icon/>{label}{to==='/clientes'&&<span className="nav-count">{clients.length}</span>}</Link>)}</nav>;})()}
     </header>
     <div className="workspace"><main>{children}</main><footer className="workspace-footer"><span>Kit Governança Interna</span><span>Organização que sustenta boas relações.</span><ShieldCheck size={16}/></footer></div>
   </div>;

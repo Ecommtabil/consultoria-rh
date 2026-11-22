@@ -15,10 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCargosRouteImport } from './routes/_authenticated/cargos'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
+import { Route as AuthenticatedConformidadeRouteImport } from './routes/_authenticated/conformidade'
 import { Route as AuthenticatedDocumentosRouteImport } from './routes/_authenticated/documentos'
 import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticated/empresa'
 import { Route as AuthenticatedEscalaRouteImport } from './routes/_authenticated/escala'
 import { Route as AuthenticatedImportarRouteImport } from './routes/_authenticated/importar'
+import { Route as AuthenticatedIndicadoresRouteImport } from './routes/_authenticated/indicadores'
 import { Route as AuthenticatedEscalaIndexRouteImport } from './routes/_authenticated/escala.index'
 import { Route as AuthenticatedEscalaAlmocosRouteImport } from './routes/_authenticated/escala.almocos'
 import { Route as AuthenticatedEscalaComparativoRouteImport } from './routes/_authenticated/escala.comparativo'
@@ -56,6 +58,12 @@ const AuthenticatedClientesRoute = AuthenticatedClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConformidadeRoute =
+  AuthenticatedConformidadeRouteImport.update({
+    id: '/conformidade',
+    path: '/conformidade',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDocumentosRoute = AuthenticatedDocumentosRouteImport.update({
   id: '/documentos',
   path: '/documentos',
@@ -76,6 +84,12 @@ const AuthenticatedImportarRoute = AuthenticatedImportarRouteImport.update({
   path: '/importar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedIndicadoresRoute =
+  AuthenticatedIndicadoresRouteImport.update({
+    id: '/indicadores',
+    path: '/indicadores',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEscalaIndexRoute =
   AuthenticatedEscalaIndexRouteImport.update({
     id: '/',
@@ -125,10 +139,12 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/cargos': typeof AuthenticatedCargosRoute
   '/clientes': typeof AuthenticatedClientesRoute
+  '/conformidade': typeof AuthenticatedConformidadeRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/importar': typeof AuthenticatedImportarRoute
+  '/indicadores': typeof AuthenticatedIndicadoresRoute
   '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -143,9 +159,11 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/cargos': typeof AuthenticatedCargosRoute
   '/clientes': typeof AuthenticatedClientesRoute
+  '/conformidade': typeof AuthenticatedConformidadeRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/importar': typeof AuthenticatedImportarRoute
+  '/indicadores': typeof AuthenticatedIndicadoresRoute
   '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -162,10 +180,12 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/cargos': typeof AuthenticatedCargosRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
+  '/_authenticated/conformidade': typeof AuthenticatedConformidadeRoute
   '/_authenticated/documentos': typeof AuthenticatedDocumentosRoute
   '/_authenticated/empresa': typeof AuthenticatedEmpresaRoute
   '/_authenticated/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/_authenticated/importar': typeof AuthenticatedImportarRoute
+  '/_authenticated/indicadores': typeof AuthenticatedIndicadoresRoute
   '/_authenticated/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/_authenticated/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/_authenticated/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -182,10 +202,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/cargos'
     | '/clientes'
+    | '/conformidade'
     | '/documentos'
     | '/empresa'
     | '/escala'
     | '/importar'
+    | '/indicadores'
     | '/escala/almocos'
     | '/escala/comparativo'
     | '/escala/equipe'
@@ -200,9 +222,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/cargos'
     | '/clientes'
+    | '/conformidade'
     | '/documentos'
     | '/empresa'
     | '/importar'
+    | '/indicadores'
     | '/escala/almocos'
     | '/escala/comparativo'
     | '/escala/equipe'
@@ -218,10 +242,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/cargos'
     | '/_authenticated/clientes'
+    | '/_authenticated/conformidade'
     | '/_authenticated/documentos'
     | '/_authenticated/empresa'
     | '/_authenticated/escala'
     | '/_authenticated/importar'
+    | '/_authenticated/indicadores'
     | '/_authenticated/escala/almocos'
     | '/_authenticated/escala/comparativo'
     | '/_authenticated/escala/equipe'
@@ -282,6 +308,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conformidade': {
+      id: '/_authenticated/conformidade'
+      path: '/conformidade'
+      fullPath: '/conformidade'
+      preLoaderRoute: typeof AuthenticatedConformidadeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/documentos': {
       id: '/_authenticated/documentos'
       path: '/documentos'
@@ -308,6 +341,13 @@ declare module '@tanstack/react-router' {
       path: '/importar'
       fullPath: '/importar'
       preLoaderRoute: typeof AuthenticatedImportarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/indicadores': {
+      id: '/_authenticated/indicadores'
+      path: '/indicadores'
+      fullPath: '/indicadores'
+      preLoaderRoute: typeof AuthenticatedIndicadoresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/escala/': {
@@ -388,19 +428,23 @@ const AuthenticatedEscalaRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCargosRoute: typeof AuthenticatedCargosRoute
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
+  AuthenticatedConformidadeRoute: typeof AuthenticatedConformidadeRoute
   AuthenticatedDocumentosRoute: typeof AuthenticatedDocumentosRoute
   AuthenticatedEmpresaRoute: typeof AuthenticatedEmpresaRoute
   AuthenticatedEscalaRoute: typeof AuthenticatedEscalaRouteWithChildren
   AuthenticatedImportarRoute: typeof AuthenticatedImportarRoute
+  AuthenticatedIndicadoresRoute: typeof AuthenticatedIndicadoresRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCargosRoute: AuthenticatedCargosRoute,
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
+  AuthenticatedConformidadeRoute: AuthenticatedConformidadeRoute,
   AuthenticatedDocumentosRoute: AuthenticatedDocumentosRoute,
   AuthenticatedEmpresaRoute: AuthenticatedEmpresaRoute,
   AuthenticatedEscalaRoute: AuthenticatedEscalaRouteWithChildren,
   AuthenticatedImportarRoute: AuthenticatedImportarRoute,
+  AuthenticatedIndicadoresRoute: AuthenticatedIndicadoresRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

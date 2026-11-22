@@ -1,0 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { Shell, PageHeading } from '@/components/governanca/shell';
+export const Route=createFileRoute('/_authenticated/conformidade')({head:()=>({meta:[{title:'Conformidade trabalhista | Kit Governança Interna'},{name:'description',content:'Acompanhe obrigações e conformidade trabalhista do cliente.'},{property:'og:title',content:'Conformidade trabalhista | Kit Governança Interna'},{property:'og:description',content:'Acompanhe obrigações e conformidade trabalhista do cliente.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Page});
+function Page(){return <Shell><div className="page-content"><PageHeading eyebrow="EM BREVE" title="Conformidade trabalhista" description="Este módulo aguarda o briefing para ser construído."/></div></Shell>;}
