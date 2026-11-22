@@ -124,6 +124,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    // Arquivos desatualizados após uma atualização: recarrega a página uma única vez.
+    const isChunkError = (m: string) => /Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(m);
+    const recover = () => { if (sessionStorage.getItem('chunk-reload')) return; sessionStorage.setItem('chunk-reload', '1'); window.location.reload(); };
+    const onRej = (e: PromiseRejectionEvent) => { if (isChunkError(String(e.reason?.message ?? e.reason))) recover(); };
+    const onErr = (e: ErrorEvent) => { if (isChunkError(e.message)) recover(); };
+    window.addEventListener('vite:preloadError', recover);
+    window.addEventListener('unhandledrejection', onRej);
+    window.addEventListener('error', onErr);
+    const t = setTimeout(() => sessionStorage.removeItem('chunk-reload'), 10000);
+    return () => { clearTimeout(t); window.removeEventListener('vite:preloadError', recover); window.removeEventListener('unhandledrejection', onRej); window.removeEventListener('error', onErr); };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
