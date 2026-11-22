@@ -45,7 +45,7 @@ export function Docs({client,inicial='regimento',somente}:{client:Cliente;inicia
     </div>;
   if(somente) return corpo;
   return <div className="rail-layout">
-    <SideRail caption="Documentos">{(Object.keys(NOMES) as DocId[]).map(id=><button key={id} type="button" className={`side-rail-item ${aba===id?'active':''}`} onClick={()=>setAba(id)}><FileText size={15}/><span>{NOMES[id]}</span></button>)}</SideRail>
+    <SideRail caption="Documentos">{(Object.keys(NOMES) as DocId[]).filter(id=>id!=='plano').map(id=><button key={id} type="button" className={`side-rail-item ${aba===id?'active':''}`} onClick={()=>setAba(id)}><FileText size={15}/><span>{NOMES[id]}</span></button>)}</SideRail>
     <div className="rail-body">{corpo}</div>
   </div>;
 }
