@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileDown, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { SideRail } from '@/components/governanca/SideRail';
 import { GeradorRegimento } from '@/components/regimento/Gerador';
 import { MODELOS } from '@/lib/regimento/montar';
 import { useApp } from '@/components/governanca/provider';
@@ -29,9 +30,9 @@ export function Docs({client,inicial='regimento',somente}:{client:Cliente;inicia
   const vazio=doc.blocos.length===0;
   async function word(){try{const {gerarWord}=await import('@/lib/documentos/word');baixar(await gerarWord(doc),`${doc.arquivo}.docx`);}catch(e){toast.error(`Falha ao gerar Word: ${(e as Error).message}`);}}
   async function pdf(){try{const {gerarPdf}=await import('@/lib/documentos/pdf');gerarPdf(doc).save(`${doc.arquivo}.pdf`);}catch(e){toast.error(`Falha ao gerar PDF: ${(e as Error).message}`);}}
-  return <>
-    {!somente&&<nav className="doc-tabs" aria-label="Documentos">{(Object.keys(NOMES) as DocId[]).map(id=><button key={id} type="button" className={aba===id?'active':''} onClick={()=>setAba(id)}><FileText size={15}/>{NOMES[id]}</button>)}</nav>}
-    {aba==='regimento'||aba==='codigo'?<GeradorRegimento key={aba} cliente={client} modelo={MODELOS[aba]}/>:<div className="doc-layout">
+  const corpo = aba==='regimento'||aba==='codigo'
+    ? <GeradorRegimento key={aba} cliente={client} modelo={MODELOS[aba]}/>
+    : <div className="doc-layout">
       <aside className="doc-side">
         <section><h3>Pendências</h3><ul className="pend-list">{pendenciasDe(aba).map(([k,l])=>{const ok=preenchido(client[k]);return <li key={k}><span className={`pend-dot ${ok?'ok':'pend'}`} aria-hidden/>{l}<span className="sr-only">{ok?' preenchido':' pendente'}</span></li>;})}</ul>
           <Button asChild variant="outline" className="w-full"><Link to="/empresa"><Pencil/>Editar dados da empresa</Link></Button></section>
@@ -41,7 +42,12 @@ export function Docs({client,inicial='regimento',somente}:{client:Cliente;inicia
         <div className="doc-actions"><Button onClick={word} disabled={vazio}><FileDown/>Baixar em Word</Button><Button variant="outline" onClick={pdf} disabled={vazio}><FileDown/>Baixar em PDF</Button></div>
       </aside>
       <Previa doc={doc}/>
-    </div>}</>;
+    </div>;
+  if(somente) return corpo;
+  return <div className="rail-layout">
+    <SideRail caption="Documentos">{(Object.keys(NOMES) as DocId[]).map(id=><button key={id} type="button" className={`side-rail-item ${aba===id?'active':''}`} onClick={()=>setAba(id)}><FileText size={15}/><span>{NOMES[id]}</span></button>)}</SideRail>
+    <div className="rail-body">{corpo}</div>
+  </div>;
 }
 function T({s}:{s:string}){return <>{segmentos(s).map((p,i)=>p.ph?<mark key={i} className="doc-ph">{p.text}</mark>:<span key={i}>{p.text}</span>)}</>;}
 function B({b}:{b:Bloco}){switch(b.t){

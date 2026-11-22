@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Building2, Upload, Users, FileText, CalendarDays, ChartNoAxesCombined, ShieldCheck, ChevronDown, Moon, Sun, LogOut, ArrowUpRight, FolderOpen, Plus, Check, Loader2, AlertCircle, Scale, BarChart3 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApp } from './provider';
+import { SideRail } from './SideRail';
 import { supabase } from '@/integrations/supabase/client';
 const menus=[
   {label:'Clientes',icon:Building2,items:[{to:'/clientes',label:'Meus clientes',icon:Building2},{to:'/importar',label:'Importar dados',icon:Upload},{to:'/empresa',label:'Empresa e equipe',icon:Users}]},
@@ -23,9 +24,18 @@ export function Shell({children}:{children:ReactNode}){
   const {user,clients,selected,select,dark,toggleDark}=useApp();
   const pathname=useLocation({select:location=>location.pathname});
   const navigate=useNavigate();const qc=useQueryClient();
+  const headerRef=useRef<HTMLElement>(null);
+  useEffect(()=>{
+    const el=headerRef.current;if(!el)return;
+    const set=()=>document.documentElement.style.setProperty('--header-h',`${el.offsetHeight}px`);
+    set();
+    const ro=new ResizeObserver(set);ro.observe(el);
+    return()=>ro.disconnect();
+  },[]);
   async function logout(){await qc.cancelQueries();qc.clear();await supabase.auth.signOut();await navigate({to:'/auth',replace:true});}
+  const current=menus.find(m=>m.items.some(i=>isActive(pathname,i.to)));
   return <div className="app-shell">
-    <header className="app-header">
+    <header className="app-header" ref={headerRef}>
       <div className="header-row">
         <Link to="/" className="brand-link-inline"><Brand/></Link>
         <div className="header-client">
@@ -40,9 +50,13 @@ export function Shell({children}:{children:ReactNode}){
       <nav className="main-tabs" aria-label="Menus principais">
         {menus.map(m=>{const Icon=m.icon;return <Link key={m.label} to={m.items[0].to} className={`main-tab ${m.items.some(i=>isActive(pathname,i.to))?'active':''}`}><Icon/>{m.label}</Link>;})}
       </nav>
-      {(()=>{const cur=menus.find(m=>m.items.some(i=>isActive(pathname,i.to)));if(!cur||cur.items.length<2)return null;return <nav className="sub-tabs" aria-label={`Submenu ${cur.label}`}>{cur.items.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`sub-tab ${isActive(pathname,to)?'active':''}`}><Icon/>{label}{to==='/clientes'&&<span className="nav-count">{clients.length}</span>}</Link>)}</nav>;})()}
     </header>
-    <div className="workspace"><main>{children}</main><footer className="workspace-footer"><span>Kit Governança Interna</span><span>Organização que sustenta boas relações.</span><ShieldCheck size={16}/></footer></div>
+    <div className="workspace">
+      {current&&current.items.length>1&&<SideRail caption={current.label}>
+        {current.items.map(({to,label,icon:Icon})=><Link key={to} to={to} className={`side-rail-item ${isActive(pathname,to)?'active':''}`}><Icon/><span>{label}</span>{to==='/clientes'&&<span className="nav-count">{clients.length}</span>}</Link>)}
+      </SideRail>}
+      <div className="workspace-body"><main>{children}</main><footer className="workspace-footer"><span>Kit Governança Interna</span><span>Organização que sustenta boas relações.</span><ShieldCheck size={16}/></footer></div>
+    </div>
   </div>;
 }
 export function PageHeading({eyebrow,title,description,action}:{eyebrow:string;title:string;description?:string | undefined;action?:ReactNode}){return <div className="page-heading"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1>{description&&<p className="page-description">{description}</p>}</div>{action}</div>;}

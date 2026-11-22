@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { Shell, PageHeading, NoClient } from '@/components/governanca/shell';
+import { SideRail } from '@/components/governanca/SideRail';
 import { useApp } from '@/components/governanca/provider';
 import { EscalaProvider } from '@/components/escala/contexto';
 const SUB = [
@@ -14,6 +15,8 @@ export const Route = createFileRoute('/_authenticated/escala')({
 function EscalaLayout() {
   const { selected } = useApp(); const path = useLocation({ select: l => l.pathname });
   return <Shell><div className="page-content ez-page"><PageHeading eyebrow="ETAPA 04 · KIT DO CLIENTE" title="Escalas e dimensionamento" description={selected?.nome} />
-    <nav className="ez-subtabs" aria-label="Subabas de escalas">{SUB.map((s, i) => <Link key={s.to} to={s.to} className={path === s.to ? 'active' : ''}><span>{i + 1}</span>{s.label}</Link>)}</nav>
-    {selected ? <EscalaProvider key={selected.id} client={selected}><Outlet /></EscalaProvider> : <NoClient />}</div></Shell>;
+    <div className="rail-layout">
+      <SideRail caption="Escalas e dimensionamento">{SUB.map((s, i) => <Link key={s.to} to={s.to} className={`side-rail-item ${path === s.to ? 'active' : ''}`}><span className="rail-num">{i + 1}</span><span>{s.label}</span></Link>)}</SideRail>
+      <div className="rail-body">{selected ? <EscalaProvider key={selected.id} client={selected}><Outlet /></EscalaProvider> : <NoClient />}</div>
+    </div></div></Shell>;
 }
