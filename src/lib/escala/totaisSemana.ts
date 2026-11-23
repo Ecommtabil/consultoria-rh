@@ -15,7 +15,7 @@ export function totaisSemana(e: EscalaDados, w: number, almocos?: Record<string,
       else { const j = e.codigos[c]; if (!j) continue; dias++; const a = almocos?.[p.id]?.[i]; horas += a ? j[1] - j[0] - (a.fim - a.ini) : trabalhoJanela(j[1] - j[0]); }
     }
     const carga = p.horas * 60; const saldo = ferias ? null : horas - carga; const minimo = 7 - diasTrabalho(p.regime); const folgas = escaladas + fechada;
-    const situacao = ferias ? 'Férias' : folgas < minimo ? `Falta ${minimo - folgas} folga${minimo - folgas > 1 ? 's' : ''}` : saldo! > 0 ? 'Hora extra' : saldo! < 0 ? 'Abaixo da carga' : 'Ok';
+    const situacao = ferias ? 'Férias' : folgas < minimo ? `Falta ${minimo - folgas} folga${minimo - folgas > 1 ? 's' : ''}` : !parcial && folgas > 2 ? `${folgas} folgas (máx. 2)` : saldo! > 0 ? 'Hora extra' : saldo! < 0 ? 'Abaixo da carga' : 'Ok';
     return { id: p.id, nome: p.nome, setor: p.setor, dias, folgas, escaladas, fechada, domingo, ferias, horas, carga, saldo, situacao, minimo, parcial };
   });
 }

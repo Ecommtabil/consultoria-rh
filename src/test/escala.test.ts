@@ -51,3 +51,11 @@ describe('Folgas por semana', () => {
     }
   });
 });
+
+describe('Aviso de folgas a mais', () => {
+  it('semana com 3 folgas aparece como "3 folgas (máx. 2)"', () => {
+    const e = gerarEscala({ cfg: escritorio('13:45', true), colabs: time3, ferias: [], mes: '2026-12', cenario: 'nova' });
+    const pid = e.pessoas[0]!.id; const cod = Object.keys(e.codigos)[0]!; for (let i = 7; i < 14; i++) e.grade[pid]![i] = { c: i < 10 ? 'F' : cod };
+    expect(totaisSemana(e, 1).find(t => t.id === pid)!.situacao).toBe('3 folgas (máx. 2)');
+  });
+});
