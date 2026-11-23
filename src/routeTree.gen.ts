@@ -21,6 +21,7 @@ import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedEscalaRouteImport } from './routes/_authenticated/escala'
 import { Route as AuthenticatedImportarRouteImport } from './routes/_authenticated/importar'
 import { Route as AuthenticatedIndicadoresRouteImport } from './routes/_authenticated/indicadores'
+import { Route as AuthenticatedRecrutamentoRouteImport } from './routes/_authenticated/recrutamento'
 import { Route as AuthenticatedEscalaIndexRouteImport } from './routes/_authenticated/escala.index'
 import { Route as AuthenticatedEscalaAlmocosRouteImport } from './routes/_authenticated/escala.almocos'
 import { Route as AuthenticatedEscalaComparativoRouteImport } from './routes/_authenticated/escala.comparativo'
@@ -90,6 +91,12 @@ const AuthenticatedIndicadoresRoute =
     path: '/indicadores',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRecrutamentoRoute =
+  AuthenticatedRecrutamentoRouteImport.update({
+    id: '/recrutamento',
+    path: '/recrutamento',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEscalaIndexRoute =
   AuthenticatedEscalaIndexRouteImport.update({
     id: '/',
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/importar': typeof AuthenticatedImportarRoute
   '/indicadores': typeof AuthenticatedIndicadoresRoute
+  '/recrutamento': typeof AuthenticatedRecrutamentoRoute
   '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/importar': typeof AuthenticatedImportarRoute
   '/indicadores': typeof AuthenticatedIndicadoresRoute
+  '/recrutamento': typeof AuthenticatedRecrutamentoRoute
   '/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/_authenticated/escala': typeof AuthenticatedEscalaRouteWithChildren
   '/_authenticated/importar': typeof AuthenticatedImportarRoute
   '/_authenticated/indicadores': typeof AuthenticatedIndicadoresRoute
+  '/_authenticated/recrutamento': typeof AuthenticatedRecrutamentoRoute
   '/_authenticated/escala/almocos': typeof AuthenticatedEscalaAlmocosRoute
   '/_authenticated/escala/comparativo': typeof AuthenticatedEscalaComparativoRoute
   '/_authenticated/escala/equipe': typeof AuthenticatedEscalaEquipeRoute
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/escala'
     | '/importar'
     | '/indicadores'
+    | '/recrutamento'
     | '/escala/almocos'
     | '/escala/comparativo'
     | '/escala/equipe'
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/empresa'
     | '/importar'
     | '/indicadores'
+    | '/recrutamento'
     | '/escala/almocos'
     | '/escala/comparativo'
     | '/escala/equipe'
@@ -248,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/escala'
     | '/_authenticated/importar'
     | '/_authenticated/indicadores'
+    | '/_authenticated/recrutamento'
     | '/_authenticated/escala/almocos'
     | '/_authenticated/escala/comparativo'
     | '/_authenticated/escala/equipe'
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndicadoresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/recrutamento': {
+      id: '/_authenticated/recrutamento'
+      path: '/recrutamento'
+      fullPath: '/recrutamento'
+      preLoaderRoute: typeof AuthenticatedRecrutamentoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/escala/': {
       id: '/_authenticated/escala/'
       path: '/'
@@ -434,6 +454,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEscalaRoute: typeof AuthenticatedEscalaRouteWithChildren
   AuthenticatedImportarRoute: typeof AuthenticatedImportarRoute
   AuthenticatedIndicadoresRoute: typeof AuthenticatedIndicadoresRoute
+  AuthenticatedRecrutamentoRoute: typeof AuthenticatedRecrutamentoRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -445,6 +466,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEscalaRoute: AuthenticatedEscalaRouteWithChildren,
   AuthenticatedImportarRoute: AuthenticatedImportarRoute,
   AuthenticatedIndicadoresRoute: AuthenticatedIndicadoresRoute,
+  AuthenticatedRecrutamentoRoute: AuthenticatedRecrutamentoRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

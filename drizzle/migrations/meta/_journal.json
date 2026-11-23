@@ -57,6 +57,13 @@
       "when": 1795113822974,
       "tag": "0007_duplicate_cliente_cargos",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795456395168,
+      "tag": "0008_recrutamento",
+      "breakpoints": true
     }
   ]
 }

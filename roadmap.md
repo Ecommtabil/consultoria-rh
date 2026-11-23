@@ -14,3 +14,4 @@
 - [x] Cargos e salários: estrutura, matriz, trilhas e Plano (documento).
 - [x] 6 menus principais com submenus verticais (barra lateral à esquerda).
 - [ ] Conformidade trabalhista e Indicadores de RH — aguardam briefing.
+- [x] Recrutamento e seleção: vagas com critérios/pesos, currículos PDF, análise por IA e laudo PDF.

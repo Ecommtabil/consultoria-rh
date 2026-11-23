@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      candidatos: {
+        Row: {
+          analise: Json | null
+          arquivo_nome: string
+          arquivo_path: string | null
+          cliente_id: string
+          criado_em: string
+          email: string
+          id: string
+          nome: string
+          notas: Json
+          parecer: string
+          status: string
+          telefone: string
+          vaga_id: string | null
+        }
+        Insert: {
+          analise?: Json | null
+          arquivo_nome?: string
+          arquivo_path?: string | null
+          cliente_id: string
+          criado_em?: string
+          email?: string
+          id?: string
+          nome?: string
+          notas?: Json
+          parecer?: string
+          status?: string
+          telefone?: string
+          vaga_id?: string | null
+        }
+        Update: {
+          analise?: Json | null
+          arquivo_nome?: string
+          arquivo_path?: string | null
+          cliente_id?: string
+          criado_em?: string
+          email?: string
+          id?: string
+          nome?: string
+          notas?: Json
+          parecer?: string
+          status?: string
+          telefone?: string
+          vaga_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidatos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidatos_vaga_id_fkey"
+            columns: ["vaga_id"]
+            isOneToOne: false
+            referencedRelation: "vagas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cargos: {
         Row: {
           cargo: string | null
@@ -451,6 +514,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vagas: {
+        Row: {
+          cliente_id: string
+          criado_em: string
+          criterios: Json
+          descricao: string
+          id: string
+          requisitos: string
+          status: string
+          titulo: string
+        }
+        Insert: {
+          cliente_id: string
+          criado_em?: string
+          criterios?: Json
+          descricao?: string
+          id?: string
+          requisitos?: string
+          status?: string
+          titulo?: string
+        }
+        Update: {
+          cliente_id?: string
+          criado_em?: string
+          criterios?: Json
+          descricao?: string
+          id?: string
+          requisitos?: string
+          status?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vagas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

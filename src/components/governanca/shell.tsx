@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { Building2, Upload, Users, FileText, CalendarDays, ChartNoAxesCombined, ShieldCheck, ChevronDown, Moon, Sun, LogOut, ArrowUpRight, FolderOpen, Plus, Check, Loader2, AlertCircle, Scale, BarChart3 } from 'lucide-react';
+import { Building2, Upload, Users, FileText, CalendarDays, ChartNoAxesCombined, ShieldCheck, ChevronDown, Moon, Sun, LogOut, ArrowUpRight, FolderOpen, Plus, Check, Loader2, AlertCircle, Scale, BarChart3, UserSearch } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApp } from './provider';
@@ -12,6 +12,7 @@ const menus=[
   {label:'Normas e políticas internas',icon:FileText,items:[{to:'/documentos',label:'Normas e políticas internas',icon:FileText}]},
   {label:'Jornadas e escalas',icon:CalendarDays,items:[{to:'/escala',label:'Escalas e dimensionamento',icon:CalendarDays}]},
   {label:'Remuneração e incentivos',icon:ChartNoAxesCombined,items:[{to:'/cargos',label:'Cargos e salários',icon:ChartNoAxesCombined}]},
+  {label:'Recrutamento e seleção',icon:UserSearch,items:[{to:'/recrutamento',label:'Recrutamento e seleção',icon:UserSearch}]},
   {label:'Indicadores de RH',icon:BarChart3,items:[{to:'/indicadores',label:'Indicadores de RH',icon:BarChart3}]},
 ] as const;
 const isActive=(p:string,to:string)=>p===to||p.startsWith(`${to}/`)||(to==='/clientes'&&p==='/');
