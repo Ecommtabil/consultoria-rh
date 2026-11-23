@@ -37,3 +37,17 @@ describe('Caso Caixa', () => {
     expect(maxSimultaneo(e)).toBe(1);
   });
 });
+
+describe('Folgas por semana', () => {
+  it('ninguém tem mais de 2 folgas em uma semana (Caixa, 1 posto, 2 pessoas)', () => {
+    const c = configPadrao(); c.nova = { tipo: '5x2', horas: 42, domingo: 3, encargos: 70 }; c.setores['Caixa'] = { dias: [0, 1, 2, 3, 4, 5, 6], abre: '06:00', fecha: '23:00', postos: 1 };
+    const e = gerarEscala({ cfg: c, colabs: ['a', 'b'].map(id => pessoa(id, 'Caixa')), ferias: [], mes: '2026-12', cenario: 'nova', contratar: false });
+    for (const p of e.pessoas) {
+      const cel = e.grade[p.id]!;
+      for (let w = 0; w * 7 < cel.length; w++) {
+        const folgas = cel.slice(w * 7, w * 7 + 7).filter(c => c.c === 'F' || c.c === 'X').length;
+        expect(folgas).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+});

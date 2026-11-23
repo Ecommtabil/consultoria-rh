@@ -42,13 +42,17 @@ export function gerarEscala(inp: EntradaEscala): EscalaDados {
         ord.slice(0, nTrab).forEach(i => escolhidos.add(i)); ord.slice(nTrab).forEach(i => { if (st[i]!.quota >= 1) reservados.add(i); });
       }
       const codSemana: (string)[][] = M.map(() => []);
+      // Máximo de 2 folgas por semana (dias com a empresa fechada contam como folga).
+      const folgasSem = M.map(() => 0); const MAX_FOLGAS = 2;
+      let diaAtual = 0;
+      const podeFolgar = (i: number) => folgasSem[i]! + (reservados.has(i) && diaAtual < 5 ? 1 : 0) + (diaAtual < 6 && st[i]!.N > 0 && st[i]!.dom >= st[i]!.N - 1 && !!M[i]!.janelas[6] && M[i]!.janelas[6] !== 'folga' ? 1 : 0) < MAX_FOLGAS;
       // Ocupação por dia em fatias de 15 min: nunca mais pessoas que postos (equipamentos) ao mesmo tempo.
       const occ: Map<number, number>[] = [0, 1, 2, 3, 4, 5, 6].map(() => new Map());
       const fatias = (h: { ini: number; fim: number }) => { const out: number[] = []; for (let t = Math.floor(h.ini / 15) * 15; t < h.fim; t += 15) out.push(t); return out; };
       const cabe = (d: number, h: { ini: number; fim: number }, ignorar?: { ini: number; fim: number }) => { const ig = new Set(ignorar ? fatias(ignorar) : []); return fatias(h).every(t => (occ[d]!.get(t) ?? 0) - (ig.has(t) ? 1 : 0) < plano.postos); };
       const ocupar = (d: number, h: { ini: number; fim: number }, delta: number) => { for (const t of fatias(h)) occ[d]!.set(t, (occ[d]!.get(t) ?? 0) + delta); };
       for (let d = 0; d < 7; d++) {
-        const iso = semana[d]!; const dec: (string | null)[] = M.map(() => null); const recorte = new Map<number, { ini: number; fim: number }>();
+        diaAtual = d; const iso = semana[d]!; const dec: (string | null)[] = M.map(() => null); const recorte = new Map<number, { ini: number; fim: number }>();
         const restantes = (i: number) => { let n = 0; for (let dd = d; dd < 7; dd++) if (disponivel(M[i]!, dd, semana[dd]!) && !(reservados.has(i) && dd === 5)) n++; return n; };
         const livre = (i: number) => st[i]!.quota - (reservados.has(i) && d <= 5 ? 1 : 0);
         M.forEach((m, i) => {
@@ -59,19 +63,20 @@ export function gerarEscala(inp: EntradaEscala): EscalaDados {
           else if (d === 5 && reservados.has(i)) dec[i] = 'F';
           else if (s.consec >= 6) dec[i] = 'F';
           else if (d === 6 && s.N > 0 && s.dom >= s.N - 1) dec[i] = 'F';
-          else if (livre(i) > 0 && livre(i) >= restantes(i) && !(d === 5 && escolhidos.has(i))) dec[i] = 'F';
+          else if (podeFolgar(i) && livre(i) > 0 && livre(i) >= restantes(i) && !(d === 5 && escolhidos.has(i))) dec[i] = 'F';
         });
         const cands = M.map((_, i) => i).filter(i => dec[i] === null && livre(i) > 0 && !(d === 5 && escolhidos.has(i)))
           .sort((a, b) => (livre(b) / Math.max(1, restantes(b)) + st[b]!.consec) - (livre(a) / Math.max(1, restantes(a)) + st[a]!.consec) || a - b);
         for (const i of cands) {
           const g = M[i]!.grupoDia[d]!; const trabalhando = M.filter((o, k) => o.grupoDia[d] === g && dec[k] === null).length;
-          if (trabalhando - 1 >= (plano.needDia[d]![g] ?? 0)) dec[i] = 'F';
+          if (podeFolgar(i) && trabalhando - 1 >= (plano.needDia[d]![g] ?? 0)) dec[i] = 'F';
         }
         if (plano.postos > 0) {
           const ordem = M.map((_, i) => i).filter(i => dec[i] === null).sort((a, b) => livre(a) - livre(b) || st[a]!.consec - st[b]!.consec || a - b);
+          const colocados: number[] = [];
           for (const i of ordem) {
             const j = M[i]!.janelas[d] as { ini: number; fim: number };
-            if (cabe(d, j)) { ocupar(d, j, 1); continue; }
+            if (cabe(d, j)) { ocupar(d, j, 1); colocados.push(i); continue; }
             // Recorta para o maior trecho com posto livre; abaixo de 4h vira folga.
             let melhor: { ini: number; fim: number } | null = null; let ini: number | null = null;
             for (const t of [...fatias(j), j.fim]) {
@@ -79,13 +84,25 @@ export function gerarEscala(inp: EntradaEscala): EscalaDados {
               if (livreT && ini === null) ini = Math.max(t, j.ini);
               if (!livreT && ini !== null) { const seg = { ini, fim: Math.min(t, j.fim) }; if (!melhor || seg.fim - seg.ini > melhor.fim - melhor.ini) melhor = seg; ini = null; }
             }
-            if (melhor && melhor.fim - melhor.ini >= 240) { recorte.set(i, melhor); ocupar(d, melhor, 1); } else dec[i] = 'F';
+            if (melhor && melhor.fim - melhor.ini >= 240) { recorte.set(i, melhor); ocupar(d, melhor, 1); colocados.push(i); continue; }
+            // Procura outro horário do dia com posto livre (do mais longo ao mínimo de 4h).
+            const hd = horarios[d]; let achou: { ini: number; fim: number } | null = null;
+            if (hd) for (let len = Math.min(j.fim - j.ini, hd.fim - hd.ini); len >= 240 && !achou; len -= 15)
+              for (let t = hd.ini; t + len <= hd.fim; t += 15) { const h = { ini: t, fim: t + len }; if (cabe(d, h)) { achou = h; break; } }
+            if (!achou) {
+              // Divide o posto com quem já está no dia: cada um fica com uma metade (mínimo 4h).
+              const k = colocados.map(k => ({ k, w: recorte.get(k) ?? (M[k]!.janelas[d] as { ini: number; fim: number }) })).filter(x => x.w.fim - x.w.ini >= 480).sort((a, b) => (b.w.fim - b.w.ini) - (a.w.fim - a.w.ini))[0];
+              if (k) { const mid = k.w.ini + Math.round((k.w.fim - k.w.ini) / 30) * 15; ocupar(d, k.w, -1); const a = { ini: k.w.ini, fim: mid }; recorte.set(k.k, a); ocupar(d, a, 1); achou = { ini: mid, fim: k.w.fim }; }
+            }
+            if (achou) { recorte.set(i, achou); ocupar(d, achou, 1); colocados.push(i); }
+            else if (podeFolgar(i)) dec[i] = 'F';
+            else { dec[i] = 'F'; avisos.push(`${M[i]!.p.nome}, ${ddmm(iso)}: sem posto livre — mais pessoas que postos no setor ${setor}`); }
           }
         }
         M.forEach((m, i) => {
           const s = st[i]!; const r = dec[i] ?? null;
           if (r === null) { const j = recorte.get(i) ?? (m.janelas[d] as { ini: number; fim: number }); codSemana[i]![d] = `${j.ini}-${j.fim}`; s.consec++; if (d === 6) s.dom++; if (d === 5) s.sabSem = 0; }
-          else { codSemana[i]![d] = r; s.consec = 0; if (r !== 'X' && s.quota > 0) s.quota--; if (r === 'F' && d === 5 && reservados.has(i)) reservados.delete(i); if (d === 6) s.dom = 0; if (d === 5) s.sabSem++; }
+          else { codSemana[i]![d] = r; s.consec = 0; if (r === 'F' || r === 'X') folgasSem[i]!++; if (r !== 'X' && s.quota > 0) s.quota--; if (r === 'F' && d === 5 && reservados.has(i)) reservados.delete(i); if (d === 6) s.dom = 0; if (d === 5) s.sabSem++; }
         });
       }
       M.forEach((m, i) => {
