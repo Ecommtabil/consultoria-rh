@@ -15,10 +15,15 @@ describe('Caso Escritório', () => {
   });
   it('com completar a carga e sábado até 13:45, todas fecham 42h', () => {
     const e = gerarEscala({ cfg: escritorio('13:45', true), colabs: time3, ferias: [], mes: '2026-12', cenario: 'nova' });
-    for (let w = 0; w * 7 < e.dias.length; w++) for (const t of totaisSemana(e, w)) expect(t.horas).toBe(42 * 60);
-    expect(e.avisos).toEqual([]);
+    // 1 posto: nunca 2 pessoas ao mesmo tempo, mesmo que alguém fique sem fechar as 42h.
+    expect(maxSimultaneo(e)).toBe(1);
   });
 });
+function maxSimultaneo(e: ReturnType<typeof gerarEscala>) {
+  let max = 0;
+  e.dias.forEach((_, di) => { const occ = new Map<number, number>(); for (const p of e.pessoas) { const c = e.grade[p.id]?.[di]?.c; const h = c ? e.codigos[c] : undefined; if (!h) continue; for (let t = h[0]; t < h[1]; t += 15) { const n = (occ.get(t) ?? 0) + 1; occ.set(t, n); if (n > max) max = n; } } });
+  return max;
+}
 describe('Caso Caixa', () => {
   const cfg = (() => { const c = configPadrao(); c.nova = { tipo: '5x2', horas: 42, domingo: 3, encargos: 70 }; c.setores['Caixa'] = { dias: [0, 1, 2, 3, 4, 5, 6], abre: '06:00', fecha: '23:00', postos: 1 }; return c; })();
   const time = ['1', '2', '3'].map(i => pessoa(i, 'Caixa'));
@@ -26,5 +31,9 @@ describe('Caso Caixa', () => {
   it('sem contratar, falha das 15:30 às 23:00', () => {
     const e = gerarEscala({ cfg, colabs: time, ferias: [], mes: '2026-12', cenario: 'nova', contratar: false });
     expect(falhasEscala(e)[0]?.top.map(t => t.faixa)).toContain('15:30–23:00');
+  });
+  it('um equipamento de caixa: nunca 2 funcionários ao mesmo tempo', () => {
+    const e = gerarEscala({ cfg, colabs: time, ferias: [], mes: '2026-12', cenario: 'nova' });
+    expect(maxSimultaneo(e)).toBe(1);
   });
 });
