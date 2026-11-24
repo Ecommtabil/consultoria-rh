@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { configPadrao, dimensionarSetor, gerarEscala, setorCfg, totaisSemana, viabilidadeCarga, falhasEscala, type Colab, type EscalaConfig } from '@/lib/escala';
+import { calcAlmocos, montarDia, configPadrao, dimensionarSetor, gerarEscala, setorCfg, totaisSemana, viabilidadeCarga, falhasEscala, type Colab, type EscalaConfig } from '@/lib/escala';
 const pessoa = (id: string, setor: string, extra: Partial<Colab> = {}): Colab => ({ id, nome: `Pessoa ${id}`, setor, sexo: 'M', jornada_atual: '5x2', horas_semanais: 42, entrada: null, saida: null, sab_modo: 'igual', sab_entrada: null, sab_saida: null, dom_modo: 'igual', dom_entrada: null, dom_saida: null, salario: 3000, nova_jornada: 'setor', ...extra });
 function escritorio(sabFecha = '11:30', completar = false): EscalaConfig {
   const c = configPadrao(); c.nova = { tipo: '5x2', horas: 42, domingo: 0, encargos: 70 };
@@ -21,7 +21,8 @@ describe('Caso Escritório', () => {
 });
 function maxSimultaneo(e: ReturnType<typeof gerarEscala>) {
   let max = 0;
-  e.dias.forEach((_, di) => { const occ = new Map<number, number>(); for (const p of e.pessoas) { const c = e.grade[p.id]?.[di]?.c; const h = c ? e.codigos[c] : undefined; if (!h) continue; for (let t = h[0]; t < h[1]; t += 15) { const n = (occ.get(t) ?? 0) + 1; occ.set(t, n); if (n > max) max = n; } } });
+  const alm = calcAlmocos(e);
+  e.dias.forEach((_, di) => { const occ = new Map<number, number>(); for (const p of e.pessoas) { const c = e.grade[p.id]?.[di]?.c; const h = c ? e.codigos[c] : undefined; if (!h) continue; const a = alm[p.id]?.[di]; for (let t = h[0]; t < h[1]; t += 15) { if (a && a.ini <= t && t < a.fim) continue; const n = (occ.get(t) ?? 0) + 1; occ.set(t, n); if (n > max) max = n; } } });
   return max;
 }
 describe('Caso Caixa', () => {
@@ -57,5 +58,30 @@ describe('Aviso de folgas a mais', () => {
     const e = gerarEscala({ cfg: escritorio('13:45', true), colabs: time3, ferias: [], mes: '2026-12', cenario: 'nova' });
     const pid = e.pessoas[0]!.id; const cod = Object.keys(e.codigos)[0]!; for (let i = 7; i < 14; i++) e.grade[pid]![i] = { c: i < 10 ? 'F' : cod };
     expect(totaisSemana(e, 1).find(t => t.id === pid)!.situacao).toBe('3 folgas (máx. 2)');
+  });
+});
+
+function presenca(turnos: ReturnType<typeof montarDia>['turnos'], t: number) { return turnos.filter(x => x.ini <= t && t < x.fim && !(x.alm && x.alm[0] <= t && t < x.alm[1])).length; }
+describe('Montagem do dia sem ociosidade', () => {
+  it('1 caixa, 06:00–23:00, 3 pessoas de 7h20: sempre 1 no caixa, inclusive no almoço, sem sobra', () => {
+    const d = montarDia(360, 1380, 1, [0, 1, 2].map(i => ({ idx: i, trab: 440, pref: 0 })));
+    for (let t = 360; t < 1380; t += 5) expect(presenca(d.turnos, t)).toBeLessThanOrEqual(1);
+    // 3 × 7h20 = 22h de trabalho > 17h abertas: turnos encurtados e tudo coberto, exceto o almoço de quem ficou sem dupla.
+    expect(d.descoberto).toBe(d.almocoSemCobertura);
+    expect(d.sobra).toEqual([]);
+  });
+  it('1 caixa, 08:00–18:00, 2 pessoas: dupla cobre os dois almoços e não há falha', () => {
+    const d = montarDia(480, 1080, 1, [{ idx: 0, trab: 504, pref: 0 }, { idx: 1, trab: 504, pref: 0 }]);
+    for (let t = 480; t < 1080; t += 5) expect(presenca(d.turnos, t)).toBe(1);
+    expect(d.descoberto).toBe(0);
+  });
+  it('2 postos e 6 pessoas onde cabem 4: as 2 que sobram folgam', () => {
+    const d = montarDia(480, 1080, 2, [0, 1, 2, 3, 4, 5].map(i => ({ idx: i, trab: 300, pref: 0 })));
+    expect(d.sobra.length).toBe(2);
+    for (let t = 480; t < 1080; t += 5) expect(presenca(d.turnos, t)).toBeLessThanOrEqual(2);
+  });
+  it('equipe curta: as horas que faltam aparecem como descobertas', () => {
+    const d = montarDia(360, 1380, 1, [{ idx: 0, trab: 440, pref: 0 }]);
+    expect(d.descoberto).toBeGreaterThanOrEqual(1020 - 440);
   });
 });

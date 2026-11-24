@@ -41,7 +41,10 @@ export function dimensionarSetor(cfg: EscalaConfig, setor: string, pessoas: Cola
   const necessarioTurnos = necessidade.reduce((s, n) => s + Math.ceil(n / dpp), 0);
   const horasAbertas = abertosD.reduce((s, d) => s + minutos(horarioDia(sc, d)), 0);
   const necessarioHoras = Math.ceil((postos * horasAbertas) / (reg.horas * 60) - 1e-9);
-  const necessario = Math.max(necessarioTurnos, necessarioHoras);
+  // Sem ociosidade: a equipe é medida pelas horas de posto a cobrir (postos × horas abertas), não por turnos cheios.
+  const jd = (reg.horas * 60) / (diasTrabalho(reg.regime) || 1);
+  const pessoasDia = abertosD.reduce((s, d) => s + postos * Math.ceil(minutos(horarioDia(sc, d)) / jd - 1e-9), 0);
+  const necessario = Math.max(necessarioHoras, Math.ceil(pessoasDia / dpp - 1e-9), abertos ? postos : 0);
   const cobertura = necessidade.map(() => 0); const alocacao: Alocado[] = [];
   const ordenadas = [...pessoas].sort((a, b) => ordemEntrada(a) - ordemEntrada(b) || (a.nome ?? '').localeCompare(b.nome ?? ''));
   const ratio = (t: number) => cobertura[t]! / (necessidade[t] || 1);
@@ -56,7 +59,6 @@ export function dimensionarSetor(cfg: EscalaConfig, setor: string, pessoas: Cola
   for (const a of sobras) { a.turno = menor(); cobertura[a.turno] = cobertura[a.turno]! + a.contrib; alocacao.push(a); }
   let n = 0; const contratar = (turno: number) => { n++; cobertura[turno] = cobertura[turno]! + dpp; alocacao.push({ id: null, nome: `Contratação ${n}`, turno, contrib: dpp, contratacao: true, regime: reg.regime, horas: reg.horas }); };
   if (turnos.length) {
-    for (let i = 0; i < turnos.length; i++) while (cobertura[i]! < necessidade[i]!) contratar(i);
     while (pessoas.length + n < necessario) contratar(menor());
   }
   const sal = pessoas.map(salarioDe).filter((v): v is number => v != null && v > 0);

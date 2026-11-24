@@ -15,7 +15,8 @@ export function calcAlmocos(e: EscalaDados): Record<string, Almoco[]> {
     for (const setor of setores) {
       const ps = e.pessoas.filter(p => p.setor === setor).map(p => ({ p, cel: e.grade[p.id]?.[di], jan: e.codigos[e.grade[p.id]?.[di]?.c ?? ''] })).filter(x => x.jan);
       const placed: { ini: number; fim: number }[] = [];
-      for (const x of ps) { const m = parseAlmoco(x.cel?.alm, x.jan![0]); if (m) { out[x.p.id]![di] = { ...m, manual: true }; placed.push(m); } }
+      for (const x of ps) { const m = parseAlmoco(x.cel?.alm, x.jan![0]); if (m) { out[x.p.id]![di] = { ...m, manual: true }; placed.push(m); continue; }
+        const g = x.cel?.ag; if (g && g[0] >= x.jan![0] && g[1] <= x.jan![1]) { const a = { ini: g[0], fim: g[1] }; out[x.p.id]![di] = { ...a, manual: false }; placed.push(a); } }
       for (const x of ps.filter(x => !out[x.p.id]![di]).sort((a, b) => a.jan![0] - b.jan![0])) {
         const [ini, fim] = x.jan!; const len = fim - ini; const dur = duracaoAlmoco(len); if (!dur) continue;
         const step = dur === 15 ? 15 : 30; let lo = Math.ceil((ini + 120) / step) * step; const hi = Math.min(fim - dur - 120, ini + 360);

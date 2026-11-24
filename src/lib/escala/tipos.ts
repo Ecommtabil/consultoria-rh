@@ -20,7 +20,8 @@ export type Colab = {
   salario: number | null; nova_jornada: string;
 };
 export type FeriasReg = { colaborador_id: string; inicio: string; fim: string };
-export type Celula = { c: string; e?: 1; w?: string; alm?: string | null };
+/** `ag`: almoço planejado pelo gerador (cobertura em dupla); `alm`: ajuste manual. */
+export type Celula = { c: string; e?: 1; w?: string; alm?: string | null; ag?: [number, number] };
 export type PessoaEsc = { id: string; nome: string; setor: string; sexo: string | null; regime: Regime; horas: number; grupo: number; contratacao?: boolean | undefined };
 export type SetorEsc = { postos: number; horarios: ([number, number] | null)[]; completar: boolean };
 export type EscalaDados = {

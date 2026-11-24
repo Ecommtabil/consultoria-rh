@@ -10,3 +10,4 @@ export * from './gerarEscala';
 export * from './calcAlmocos';
 export * from './totaisSemana';
 export * from './falhasEscala';
+export * from './montarDia';
