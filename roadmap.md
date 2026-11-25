@@ -15,3 +15,4 @@
 - [x] 6 menus principais com submenus verticais (barra lateral à esquerda).
 - [ ] Conformidade trabalhista e Indicadores de RH — aguardam briefing.
 - [x] Recrutamento e seleção: vagas com critérios/pesos, currículos PDF, análise por IA e laudo PDF.
+- [x] Exportar planilha de dados preenchida com os dados do cliente

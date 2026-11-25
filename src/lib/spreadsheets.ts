@@ -26,3 +26,24 @@ export async function readSpreadsheet(file: File) {
   const book = XLSX.read(await file.arrayBuffer(), {type:'array',cellDates:false});
   return parseSheets(Object.fromEntries(book.SheetNames.map(name => { const sheet=book.Sheets[name]; if(!sheet)throw new Error('Aba ausente.'); return [name,XLSX.utils.sheet_to_json<unknown[]>(sheet,{header:1,defval:''})]; })));
 }
+const br = (v: unknown) => { const s = String(v ?? ''); const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m ? `${m[3]}/${m[2]}/${m[1]}` : s; };
+/** Planilha no mesmo formato do modelo, preenchida com os dados gravados do cliente (pode ser reimportada). */
+export async function exportarDadosCliente(cliente: Record<string, unknown> & { id: string; nome: string }) {
+  const { supabase } = await import('@/integrations/supabase/client');
+  const [col, car] = await Promise.all([
+    supabase.from('colaboradores').select('*').eq('cliente_id', cliente.id).order('nome'),
+    supabase.from('cargos').select('*').eq('cliente_id', cliente.id),
+  ]);
+  if (col.error) throw col.error; if (car.error) throw car.error;
+  const book = XLSX.utils.book_new();
+  const val = (k: string, t: string) => { const v = cliente[k]; if (v == null) return ''; if (t === 'date') return br(v); if (t === 'checkbox') return v ? 'Sim' : 'Não'; if (t === 'time') return String(v).slice(0, 5); return v as string | number; };
+  XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet([['Campo', 'Valor'], ...empresaFields.map(([k, , t]) => [k, val(k, t)])]), 'Empresa');
+  const linhas: Record<string, Record<string, unknown>[]> = { Colaboradores: col.data as Record<string, unknown>[], Cargos: car.data as Record<string, unknown>[] };
+  for (const [name, spec] of Object.entries(sheetSpecs)) {
+    const rows = linhas[name] ?? [];
+    const sheet = XLSX.utils.aoa_to_sheet([spec.map(([l]) => l), ...rows.map(r => spec.map(([, k]) => { const v = r[k]; if (v == null) return ''; if (k === 'admissao') return br(v); if (/entrada|saida/.test(k)) return String(v).slice(0, 5); return v as string | number; }))]);
+    sheet['!cols'] = spec.map(() => ({ wch: 25 })); XLSX.utils.book_append_sheet(book, sheet, name);
+  }
+  const nome = cliente.nome.replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_|_$/g, '');
+  XLSX.writeFile(book, `Dados_${nome || 'cliente'}.xlsx`);
+}

@@ -40,3 +40,4 @@ use the editor.
 - Regimento and Código de Ética share one generator (src/components/regimento/Gerador.tsx) driven by a Modelo config in src/lib/regimento/montar.ts (seeds in src/data/), with user-added articles/chapters kept in per-client localStorage state; green/gold tokens are scoped to .rg.
 - Primary menus stay in the sticky header; every secondary navigation is a vertical side rail built from src/components/governanca/SideRail.tsx beside the page content, so sub-screens read as one group and collapse to a horizontal strip on narrow screens.
 - Recruitment: CV PDFs live in the private 'curriculos' bucket; AI analysis runs in an authenticated server function (src/lib/recrutamento/analisar.functions.ts) and weighted scoring stays pure in src/lib/recrutamento/avaliacao.ts with tests.
+- Schedule days are built by src/lib/escala/montarDia.ts as one lane per posto (pairs cover each other's lunch), so presence never exceeds postos.

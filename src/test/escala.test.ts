@@ -28,7 +28,8 @@ function maxSimultaneo(e: ReturnType<typeof gerarEscala>) {
 describe('Caso Caixa', () => {
   const cfg = (() => { const c = configPadrao(); c.nova = { tipo: '5x2', horas: 42, domingo: 3, encargos: 70 }; c.setores['Caixa'] = { dias: [0, 1, 2, 3, 4, 5, 6], abre: '06:00', fecha: '23:00', postos: 1 }; return c; })();
   const time = ['1', '2', '3'].map(i => pessoa(i, 'Caixa'));
-  it('2 turnos, 4 necessários e +1 contratação', () => { const d = dimensionarSetor(cfg, 'Caixa', time); expect(d.turnos.length).toBe(2); expect(d.necessario).toBe(4); expect(d.contratacoes).toBe(1); });
+  it('17h por dia com 8h24 por pessoa: 3 pessoas por dia, 5 necessários e +2 contratações', () => { const d = dimensionarSetor(cfg, 'Caixa', time); expect(d.necessario).toBe(5); expect(d.contratacoes).toBe(2); });
+  it('com as contratações, nenhum dia fica com falha no Caixa', () => { const e = gerarEscala({ cfg, colabs: time, ferias: [], mes: '2026-12', cenario: 'nova' }); expect(falhasEscala(e, calcAlmocos(e))[0]?.diasFalha).toBe(0); });
   it('sem contratar, falha das 15:30 às 23:00', () => {
     const e = gerarEscala({ cfg, colabs: time, ferias: [], mes: '2026-12', cenario: 'nova', contratar: false });
     expect(falhasEscala(e)[0]?.top.map(t => t.faixa)).toContain('15:30–23:00');
